@@ -2,10 +2,10 @@ const { pool } = require("../config/db");
 
 async function createTest(req, res) {
   try {
-    const { name, level, test_type, is_disabled } = req.body;
+    const { name, level, test_type, start_time } = req.body;
     const { rows, rowCount } = await pool.query(
-      `INSERT INTO tests (name, level, test_type, is_disabled) VALUES ($1, $2, $3, $4) returning *`,
-      [name, level, test_type, is_disabled]
+      `INSERT INTO tests (name, level, test_type, start_time) VALUES ($1, $2, $3, $4) returning *`,
+      [name, parseInt(level), test_type, start_time]
     );
     res.json(rows[0]);
   } catch (error) {
@@ -21,10 +21,11 @@ async function updateTestById(req, res) {
     .map((column, key) => `${column} = $${key + 1}`)
     .join(", ");
   const updateValues = Object.values(data);
+  console.log(updateColumns, updateValues);
 
   try {
     const { rows, rowCount } = await pool.query(
-      `UPDATE tests SET ${updateColumns} WHERE id = ${
+      `UPDATE tests SET ${updateColumns} WHERE id = $${
         updateValues.length + 1
       } returning *`,
       [...updateValues, testId]

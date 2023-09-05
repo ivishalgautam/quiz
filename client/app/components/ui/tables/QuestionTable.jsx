@@ -6,12 +6,12 @@ import { publicRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 
-export default function StudentTable() {
+export default function QuestionTable() {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
     async function getStudents() {
-      const resp = await publicRequest.get("/students");
+      const resp = await publicRequest.get("/questions");
       console.log(resp.data);
       setStudents(resp.data);
     }
@@ -34,10 +34,10 @@ export default function StudentTable() {
     <>
       <div className="mb-4 flex justify-end">
         <Link
-          href={`/students/add`}
+          href={`/questions/add-questions`}
           className="bg-emerald-500 rounded-md py-1 px-3 text-white"
         >
-          Add Student
+          Add Questions
         </Link>
       </div>
       <Table.Root>

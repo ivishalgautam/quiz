@@ -1,5 +1,10 @@
 import React from "react";
+import QuestionTable from "../components/ui/tables/QuestionTable";
 
 export default function QuestionPage() {
-  return <div>questions</div>;
+  return (
+    <section>
+      <QuestionTable />
+    </section>
+  );
 }

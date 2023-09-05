@@ -12,11 +12,6 @@ const navList = [
     icon: <MdOutlineDashboard />,
   },
   {
-    name: "Questions",
-    path: "/questions",
-    icon: <HiOutlinePencilAlt />,
-  },
-  {
     name: "Tests",
     path: "/tests",
     icon: <HiOutlinePencilAlt />,

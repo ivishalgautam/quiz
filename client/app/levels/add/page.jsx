@@ -26,12 +26,12 @@ export default function AddLevelPage() {
             type="name"
             id="name"
             className="my-input peer"
-            placeholder="Name"
+            placeholder="Level"
             autocomplete="off"
             ref={inputRef}
           />
           <label for="name" className="my-label">
-            Name
+            Level
           </label>
         </div>
         <div className="mb-4 flex justify-end">

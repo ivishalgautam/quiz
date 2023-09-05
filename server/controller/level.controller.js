@@ -4,8 +4,8 @@ async function createLevel(req, res) {
   try {
     const { name } = req.body;
     const { rows, rowCount } = await pool.query(
-      `INSERT INTO levels (name) VALUES ($1) returning *`,
-      [name]
+      `INSERT INTO levels (id, name) VALUES ($1, $2) returning *`,
+      [parseInt(name), `Level ${name}`]
     );
     res.json({ message: "Level created successfully." });
   } catch (error) {

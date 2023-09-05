@@ -12,7 +12,7 @@ $ $ LANGUAGE plpgsql;
 CREATE TYPE test_type AS ENUM ('practice', 'competitive');
 
 CREATE TABLE levels(
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL,
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -24,7 +24,9 @@ CREATE TABLE tests(
     test_type test_type DEFAULT 'practice',
     is_disabled BOOLEAN DEFAULT true,
     start_time TIMESTAMP NOT NULL,
-    created_at NOT NULL TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duration TIME NOT NULL,
+    instructions TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create a trigger to call the function before update

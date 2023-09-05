@@ -1,5 +1,10 @@
 import React from "react";
+import TestTable from "../components/ui/tables/TestTable";
 
 export default function page() {
-  return <div>my result</div>;
+  return (
+    <section>
+      <TestTable />
+    </section>
+  );
 }

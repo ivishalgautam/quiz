@@ -7,7 +7,7 @@ async function createQuestion(req, res) {
       `INSERT INTO questions (question, answer, test_id) VALUES ($1, $2, $3)`,
       [question, answer, parseInt(testId)]
     );
-    res.json(rows[0]);
+    res.json({ message: "Question created successfully." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
