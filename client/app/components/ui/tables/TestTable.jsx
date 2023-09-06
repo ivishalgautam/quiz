@@ -10,12 +10,12 @@ export default function TestTable() {
   const [tests, setTests] = useState([]);
 
   useEffect(() => {
-    async function getStudents() {
+    async function getTests() {
       const resp = await publicRequest.get("/tests");
       console.log(resp.data);
       setTests(resp.data);
     }
-    getStudents();
+    getTests();
   }, []);
 
   const handleDelete = async (id) => {
@@ -25,7 +25,7 @@ export default function TestTable() {
       const resp = await publicRequest.delete(`/tests/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
-        setStudents((prev) => prev.filter((item) => item.id !== id));
+        setTests((prev) => prev.filter((item) => item.id !== id));
       }
     }
   };
@@ -107,7 +107,7 @@ export default function TestTable() {
                     {new Date(test.created_at).toDateString()}
                   </Table.Cell>
                   <Table.Cell>
-                    <label class="switch">
+                    <label className="switch">
                       <input
                         type="checkbox"
                         checked={test.is_disabled}
@@ -118,7 +118,7 @@ export default function TestTable() {
                           });
                         }}
                       />
-                      <span class="slider"></span>
+                      <span className="slider"></span>
                     </label>
                   </Table.Cell>
                   <Table.Cell>
@@ -126,7 +126,7 @@ export default function TestTable() {
                       <AiOutlineDelete
                         size={20}
                         className="text-rose-500"
-                        onClick={() => handleDelete(student.id)}
+                        onClick={() => handleDelete(test.id)}
                       />
                     </button>
                   </Table.Cell>

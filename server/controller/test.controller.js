@@ -2,10 +2,12 @@ const { pool } = require("../config/db");
 
 async function createTest(req, res) {
   try {
-    const { name, level, test_type, start_time } = req.body;
+    const { name, level, test_type, start_time, duration, instructions } =
+      req.body;
+    console.log(name, level, test_type, start_time, duration, instructions);
     const { rows, rowCount } = await pool.query(
-      `INSERT INTO tests (name, level, test_type, start_time) VALUES ($1, $2, $3, $4) returning *`,
-      [name, parseInt(level), test_type, start_time]
+      `INSERT INTO tests (name, level, test_type, start_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6) returning *`,
+      [name, parseInt(level), test_type, start_time, duration, instructions]
     );
     res.json(rows[0]);
   } catch (error) {
@@ -78,7 +80,7 @@ async function deleteTestById(req, res) {
 
     if (rowCount === 0) return res.status(404).json("Test not found!");
 
-    res.json(rows[0]);
+    res.json({ message: "Test deleted successfully" });
   } catch (error) {
     res.json({ message: error.message });
   }

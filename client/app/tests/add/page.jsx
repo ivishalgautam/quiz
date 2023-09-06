@@ -5,24 +5,20 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import Datetime from "react-datetime";
-import EditorJS from "@editorjs/editorjs";
 import "react-datetime/css/react-datetime.css";
 
 export default function AddTestPage() {
-  const editorRef = useRef(null);
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
-  };
   const router = useRouter();
+  const [instructions, setInstructions] = useState([]);
   const [levels, setLevels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [inputs, setInputs] = useState({
     name: "",
     level: "",
     test_type: "",
+    instruction: "",
     start_time: null,
+    duration: null,
   });
 
   useEffect(() => {
@@ -38,11 +34,19 @@ export default function AddTestPage() {
 
   async function handleFormSubmit(e) {
     e.preventDefault();
-    const resp = await publicRequest.post("/tests", { ...inputs });
+    const resp = await publicRequest.post("/tests", {
+      name: inputs.name,
+      level: inputs.level,
+      test_type: inputs.test_type,
+      start_time: inputs.start_time,
+      duration: inputs.duration,
+      instructions,
+    });
 
     console.log(resp.data);
     if (resp.status === 200) {
-      router.push("/tests");
+      toast.success("New test created");
+      // router.push("/tests");
     }
   }
 
@@ -55,26 +59,20 @@ export default function AddTestPage() {
     }));
     // console.log(date);
   }
+
+  function addInstruction() {
+    setInstructions((prev) => [...prev, inputs.instruction]);
+    setInputs((prev) => ({ ...prev, instruction: "" }));
+  }
+
   console.log(inputs);
 
-  const editor = new EditorJS({
-    /**
-     * Id of Element that should contain the Editor
-     */
-    holder: "editorjs",
-
-    /**
-     * Available Tools list.
-     * Pass Tool's class or Settings object for each Tool you want to use
-     */
-    tools: {},
-  });
   return (
     <section>
       <h2 className="section-heading">Add new test</h2>
       <form onSubmit={handleFormSubmit}>
-        <div id="editorjs"></div>
         <div className="grid grid-cols-3 gap-2">
+          {/* name */}
           <div className="relative flex flex-col justify-end">
             <input
               type="name"
@@ -95,6 +93,7 @@ export default function AddTestPage() {
             </label>
           </div>
 
+          {/* level */}
           <div className="relative flex flex-col justify-end">
             <select
               id="level"
@@ -121,6 +120,7 @@ export default function AddTestPage() {
             </label>
           </div>
 
+          {/* test type */}
           <div className="relative flex flex-col justify-end">
             <select
               name="test_type"
@@ -142,18 +142,96 @@ export default function AddTestPage() {
             </label>
           </div>
 
+          {/* start time */}
           <div className="relative flex flex-col justify-end">
             <Datetime
               value={selectedDate}
               onChange={handleDateChange}
-              className=""
+              className="bg-white my-input mt-2"
+              name="start_time"
               utc={true}
             />
+            <label htmlFor="start_time" className="my-label">
+              Start time
+            </label>
+          </div>
+
+          {/* duration */}
+          <div className="relative flex flex-col justify-end">
+            <select
+              name="duration"
+              id="duration"
+              className="my-input"
+              onChange={(e) =>
+                setInputs((prev) => ({
+                  ...prev,
+                  [e.target.name]: e.target.value,
+                }))
+              }
+            >
+              <option value="5 minute">5 Minute</option>
+              <option value="10 minute">10 Minute</option>
+              <option value="15 minute">15 Minute</option>
+              <option value="20 minute">20 Minute</option>
+              <option value="25 minute">25 Minute</option>
+              <option value="30 minute">30 Minute</option>
+              <option value="35 minute">35 Minute</option>
+              <option value="40 minute">40 Minute</option>
+              <option value="45 minute">45 Minute</option>
+              <option value="50 minute">50 Minute</option>
+              <option value="55 minute">55 Minute</option>
+              <option value="1 hour">1 Hour</option>
+              <option value="2 hour">2 Hour</option>
+              <option value="3 hour">3 Hour</option>
+              <option value="4 hour">4 Hour</option>
+              <option value="5 hour">5 Hour</option>
+            </select>
+            <label htmlFor="duration" className="my-label">
+              Duration
+            </label>
+          </div>
+
+          {/* instructions */}
+          <div className="col-span-3 mt-2 flex items-center justify-center gap-2">
+            <div className="relative w-full">
+              <input
+                type="text"
+                name="instruction"
+                className="my-input"
+                placeholder="instruction"
+                value={inputs.instruction}
+                onChange={(e) =>
+                  setInputs((prev) => ({
+                    ...prev,
+                    instruction: e.target.value,
+                  }))
+                }
+              />
+              <label htmlFor="instruction" className="my-label">
+                Instruction
+              </label>
+            </div>
+            <button
+              type="button"
+              className="bg-primary text-white rounded-md h-full whitespace-nowrap px-4 font-bold"
+              onClick={addInstruction}
+            >
+              Add instruction
+            </button>
+          </div>
+
+          {/* instruction map */}
+          <div className="col-span-3">
+            <ul className="list-decimal pl-5">
+              {instructions?.map((instruction, key) => {
+                return <li key={key}>{instruction}</li>;
+              })}
+            </ul>
           </div>
         </div>
 
-        <div className="mb-4 flex justify-end">
-          <button className="bg-emerald-500 rounded-md py-1 mt-4 px-3 text-white">
+        <div className="mb-4 flex w-full">
+          <button className="w-full bg-emerald-500 rounded-md py-4 mt-4 px-3 text-white">
             Create Test
           </button>
         </div>

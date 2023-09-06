@@ -25,7 +25,7 @@ CREATE TABLE tests(
     is_disabled BOOLEAN DEFAULT true,
     start_time TIMESTAMP NOT NULL,
     duration TIME NOT NULL,
-    instructions TEXT NOT NULL,
+    instructions TEXT [] NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
