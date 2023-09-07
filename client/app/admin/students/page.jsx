@@ -1,5 +1,5 @@
+import StudentTable from "@/app/components/ui/tables/StudentTable";
 import React from "react";
-import StudentTable from "../components/ui/tables/StudentTable";
 
 export default function StudentsPage() {
   return (

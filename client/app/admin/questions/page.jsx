@@ -1,5 +1,5 @@
+import QuestionTable from "@/app/components/ui/tables/QuestionTable";
 import React from "react";
-import QuestionTable from "../components/ui/tables/QuestionTable";
 
 export default function QuestionPage() {
   return (

@@ -34,7 +34,7 @@ export default function StudentTable() {
     <>
       <div className="mb-4 flex justify-end">
         <Link
-          href={`/students/add`}
+          href={`/admin/students/add`}
           className="bg-emerald-500 rounded-md py-1 px-3 text-white"
         >
           Add Student

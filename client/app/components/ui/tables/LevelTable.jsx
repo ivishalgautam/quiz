@@ -2,7 +2,7 @@
 import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 
@@ -10,7 +10,7 @@ export default function LevelTable() {
   const [levels, setlevels] = useState([]);
   useEffect(() => {
     async function getLevels() {
-      const resp = await publicRequest.get("/levels");
+      const resp = await adminRequest.get("/levels");
       console.log(resp.data);
       setlevels(resp.data);
     }
@@ -21,7 +21,7 @@ export default function LevelTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await publicRequest.delete(`/levels/${id}`);
+      const resp = await adminRequest.delete(`/levels/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setlevels((prev) => prev.filter((item) => item.id !== id));
@@ -33,7 +33,7 @@ export default function LevelTable() {
     <>
       <div className="mb-4 flex justify-end">
         <Link
-          href={`/levels/add`}
+          href={`/admin/levels/add`}
           className="bg-emerald-500 rounded-md py-1 px-3 text-white"
         >
           Add level

@@ -2,7 +2,7 @@
 import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 
@@ -11,7 +11,7 @@ export default function TestTable() {
 
   useEffect(() => {
     async function getTests() {
-      const resp = await publicRequest.get("/tests");
+      const resp = await adminRequest.get("/tests");
       console.log(resp.data);
       setTests(resp.data);
     }
@@ -22,7 +22,7 @@ export default function TestTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await publicRequest.delete(`/tests/${id}`);
+      const resp = await adminRequest.delete(`/tests/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setTests((prev) => prev.filter((item) => item.id !== id));
@@ -31,36 +31,37 @@ export default function TestTable() {
   };
 
   async function updateTest({ id, data }) {
-    console.log(data);
+    setTests((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          return { ...item, is_published: data.is_published };
+        }
+        return item;
+      })
+    );
     try {
-      const resp = await publicRequest.put(`/tests/${id}`, { ...data });
-      if (resp.status === 200) {
-        setTests((prev) =>
-          prev.map((item) => {
-            if (item.id === id) {
-              return { ...item, is_disabled: data.is_disabled };
-            }
-            return item;
-          })
-        );
-      }
+      const resp = await adminRequest.put(`/tests/${id}`, { ...data });
+
       console.log(resp.data);
     } catch (error) {
       console.log(error);
+      toast.error("Some error occurred while updating!");
+      setTests((prev) =>
+        prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, is_published: !data.is_published };
+          }
+          return item;
+        })
+      );
     }
   }
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-end">
         <Link
-          href={`/questions/add-questions`}
-          className="bg-emerald-500 rounded-md py-1 px-3 text-white"
-        >
-          Add question
-        </Link>
-        <Link
-          href={`/tests/add`}
+          href={`/admin/tests/add`}
           className="bg-emerald-500 rounded-md py-1 px-3 text-white"
         >
           Add new test
@@ -69,13 +70,14 @@ export default function TestTable() {
       <Table.Root>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Id</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Level</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Type</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Subject</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Start time</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Created At</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Disabled</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Published</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
@@ -100,6 +102,7 @@ export default function TestTable() {
                   <Table.Cell>{test.name}</Table.Cell>
                   <Table.Cell>{test.level}</Table.Cell>
                   <Table.Cell>{test.test_type}</Table.Cell>
+                  <Table.Cell>{test.subject}</Table.Cell>
                   <Table.Cell>
                     {new Date(test.start_time).toLocaleString()}
                   </Table.Cell>
@@ -110,11 +113,11 @@ export default function TestTable() {
                     <label className="switch">
                       <input
                         type="checkbox"
-                        checked={test.is_disabled}
+                        checked={test.is_published}
                         onChange={(e) => {
                           updateTest({
                             id: test.id,
-                            data: { is_disabled: e.target.checked },
+                            data: { is_published: e.target.checked },
                           });
                         }}
                       />
@@ -122,13 +125,21 @@ export default function TestTable() {
                     </label>
                   </Table.Cell>
                   <Table.Cell>
-                    <button>
-                      <AiOutlineDelete
-                        size={20}
-                        className="text-rose-500"
-                        onClick={() => handleDelete(test.id)}
-                      />
-                    </button>
+                    <div className="flex items-center justify-center gap-2">
+                      <Link
+                        href={`/admin/questions/add/${test.id}`}
+                        className="bg-primary rounded px-2 text-white"
+                      >
+                        Add questions
+                      </Link>
+                      <button>
+                        <AiOutlineDelete
+                          size={20}
+                          className="text-rose-500"
+                          onClick={() => handleDelete(test.id)}
+                        />
+                      </button>
+                    </div>
                   </Table.Cell>
                 </Table.Row>
               );

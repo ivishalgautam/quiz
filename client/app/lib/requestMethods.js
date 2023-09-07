@@ -6,6 +6,10 @@ export const publicRequest = axios.create({
   baseURL: BASE_URL,
 });
 
+export const adminRequest = axios.create({
+  baseURL: `${BASE_URL}/admin`,
+});
+
 export const authRequest = axios.create({
   baseURL: `${BASE_URL}/auth`,
 });

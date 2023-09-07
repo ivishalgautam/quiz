@@ -1,16 +1,14 @@
 "use client";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { MdAddCircleOutline } from "react-icons/md";
 
-export default function page() {
+export default function page({ params: { testId } }) {
   const [inputLength, setInputLength] = useState(2);
-  const [tests, setTests] = useState([]);
   const [options, setOptions] = useState({});
   const [inputs, setInputs] = useState({
     answer: null,
-    testId: null,
   });
   // const [answer, setAnswer] = useState(null);
   console.log(inputs.values);
@@ -22,19 +20,19 @@ export default function page() {
     }
 
     try {
-      const resp = await publicRequest.post("/questions", {
+      const resp = await adminRequest.post("/questions", {
         question: Object.values(options),
         answer: inputs.answer,
-        testId: inputs.testId,
+        testId,
       });
 
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setInputLength(1);
-        setOptions({});
+
+        setOptions((prev) => resetValues(prev));
         setInputs({
           answer: null,
-          testId: null,
         });
       }
       console.log(resp.data);
@@ -43,43 +41,21 @@ export default function page() {
     }
   }
 
-  useEffect(() => {
-    (async function () {
-      const resp = await publicRequest.get("/tests");
-      setTests(resp.data);
-      // console.log(resp.data);
-    })();
-  }, []);
+  function resetValues(obj) {
+    const resetObj = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        resetObj[key] = "";
+      }
+    }
+    return resetObj;
+  }
 
-  console.log(inputs, Object.values(options));
+  console.log(inputs, options);
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full">
       <div className="flex flex-col">
-        <div className="relative">
-          <select
-            className="my-input w-full"
-            name="testId"
-            onChange={(e) =>
-              setInputs((prev) => ({ ...prev, testId: e.target.value }))
-            }
-          >
-            <option disabled defaultValue>
-              Select test
-            </option>
-            {tests?.map((test) => {
-              return (
-                <option key={test.id} value={test.id}>
-                  {test.name}
-                </option>
-              );
-            })}
-          </select>
-          <label htmlFor="testId" className="my-label">
-            Select test
-          </label>
-        </div>
-
         <div className="grid grid-cols-6 mt-4">
           <div className="flex flex-col gap-y-2 col-span-1">
             <button
@@ -92,10 +68,10 @@ export default function page() {
 
             {Array.from({ length: inputLength }).map((_, i) => {
               return (
-                <div className="relative flex flex-col justify-end">
+                <div className="relative flex flex-col justify-end" key={i}>
                   <input
-                    key={i}
                     name={i}
+                    value={options.i}
                     onChange={(e) =>
                       setOptions((prev) => ({
                         ...prev,

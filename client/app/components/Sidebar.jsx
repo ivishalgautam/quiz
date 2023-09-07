@@ -8,22 +8,22 @@ import { CgNotes } from "react-icons/cg";
 const navList = [
   {
     name: "Dashboard",
-    path: "/",
+    path: "/admin/dashboard",
     icon: <MdOutlineDashboard />,
   },
   {
     name: "Tests",
-    path: "/tests",
+    path: "/admin/tests",
     icon: <HiOutlinePencilAlt />,
   },
   {
     name: "Levels",
-    path: "/levels",
+    path: "/admin/levels",
     icon: <CgNotes />,
   },
   {
     name: "Students",
-    path: "/students",
+    path: "/admin/students",
     icon: <ImProfile />,
   },
   {

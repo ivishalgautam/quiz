@@ -1,6 +1,6 @@
 "use client";
 import { postData } from "@/app/hooks/postData";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -16,6 +16,7 @@ export default function AddTestPage() {
     name: "",
     level: "",
     test_type: "",
+    subject: "",
     instruction: "",
     start_time: null,
     duration: null,
@@ -24,7 +25,7 @@ export default function AddTestPage() {
   useEffect(() => {
     (async function () {
       try {
-        const resp = await publicRequest.get("/levels");
+        const resp = await adminRequest.get("/levels");
         setLevels(resp.data);
       } catch (error) {
         console.log(error);
@@ -34,10 +35,11 @@ export default function AddTestPage() {
 
   async function handleFormSubmit(e) {
     e.preventDefault();
-    const resp = await publicRequest.post("/tests", {
+    const resp = await adminRequest.post("/tests", {
       name: inputs.name,
       level: inputs.level,
       test_type: inputs.test_type,
+      subject: inputs.subject,
       start_time: inputs.start_time,
       duration: inputs.duration,
       instructions,
@@ -46,7 +48,7 @@ export default function AddTestPage() {
     console.log(resp.data);
     if (resp.status === 200) {
       toast.success("New test created");
-      // router.push("/tests");
+      // router.push("/admin/tests");
     }
   }
 
@@ -61,6 +63,9 @@ export default function AddTestPage() {
   }
 
   function addInstruction() {
+    if (inputs.instruction === "") {
+      return toast.error("Instruction can't be empty!");
+    }
     setInstructions((prev) => [...prev, inputs.instruction]);
     setInputs((prev) => ({ ...prev, instruction: "" }));
   }
@@ -117,6 +122,28 @@ export default function AddTestPage() {
             </select>
             <label htmlFor="level" className="my-label">
               Level
+            </label>
+          </div>
+
+          {/* subject */}
+          <div className="relative flex flex-col justify-end">
+            <select
+              name="subject"
+              id="subject"
+              className="my-input"
+              onChange={(e) =>
+                setInputs((prev) => ({
+                  ...prev,
+                  [e.target.name]: e.target.value,
+                }))
+              }
+            >
+              <option hidden></option>
+              <option value="abacus">Abacus</option>
+              <option value="vedic">Vedic</option>
+            </select>
+            <label htmlFor="subject" className="my-label">
+              Subject
             </label>
           </div>
 

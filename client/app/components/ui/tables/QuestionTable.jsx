@@ -34,7 +34,7 @@ export default function QuestionTable() {
     <>
       <div className="mb-4 flex justify-end">
         <Link
-          href={`/questions/add-questions`}
+          href={`/admin/questions/add-questions`}
           className="bg-emerald-500 rounded-md py-1 px-3 text-white"
         >
           Add Questions

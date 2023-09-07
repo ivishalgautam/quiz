@@ -1,5 +1,5 @@
+import TestTable from "@/app/components/ui/tables/TestTable";
 import React from "react";
-import TestTable from "../components/ui/tables/TestTable";
 
 export default function page() {
   return (

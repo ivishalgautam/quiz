@@ -9,10 +9,14 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/tests", require("./router/test"));
-app.use("/api/students", require("./router/student"));
+// admin
+app.use("/api/admin", require("./router/admin"));
+app.use("/api/admin/levels", require("./router/level"));
+app.use("/api/admin/students", require("./router/student"));
+
+// user
 app.use("/api/questions", require("./router/question"));
-app.use("/api/levels", require("./router/level"));
+app.use("/api/tests", require("./router/test"));
 
 app.listen(PORT, () => {
   console.log(`Server up at http://locathost:${PORT}`);

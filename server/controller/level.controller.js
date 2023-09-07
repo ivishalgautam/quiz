@@ -3,6 +3,12 @@ const { pool } = require("../config/db");
 async function createLevel(req, res) {
   try {
     const { name } = req.body;
+    const levelExist = await pool.query(`SELECT * FROM levels WHERE id = $1`, [
+      name,
+    ]);
+    if (levelExist.rowCount > 0) {
+      return res.status(400).json({ message: `Level ${name} already exist!` });
+    }
     const { rows, rowCount } = await pool.query(
       `INSERT INTO levels (id, name) VALUES ($1, $2) returning *`,
       [parseInt(name), `Level ${name}`]

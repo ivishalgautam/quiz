@@ -2,16 +2,31 @@ const { pool } = require("../config/db");
 
 async function createTest(req, res) {
   try {
-    const { name, level, test_type, start_time, duration, instructions } =
-      req.body;
-    console.log(name, level, test_type, start_time, duration, instructions);
+    const {
+      name,
+      level,
+      test_type,
+      subject,
+      start_time,
+      duration,
+      instructions,
+    } = req.body;
+    console.log(req.body);
     const { rows, rowCount } = await pool.query(
-      `INSERT INTO tests (name, level, test_type, start_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6) returning *`,
-      [name, parseInt(level), test_type, start_time, duration, instructions]
+      `INSERT INTO tests (name, level, test_type, subject, start_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *`,
+      [
+        name,
+        parseInt(level),
+        test_type,
+        subject,
+        start_time,
+        duration,
+        instructions,
+      ]
     );
     res.json(rows[0]);
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -38,7 +53,7 @@ async function updateTestById(req, res) {
 
     res.json(rows[0]);
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -55,17 +70,30 @@ async function getTestById(req, res) {
 
     res.json(rows[0]);
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
 
-async function getTests(req, res) {
+// admin
+async function getAdminTests(req, res) {
   try {
     const { rows, rowCount } = await pool.query(`SELECT * FROM tests`);
 
     res.json(rows);
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getTests(req, res) {
+  try {
+    const { rows, rowCount } = await pool.query(
+      `SELECT * FROM tests WHERE is_published = true`
+    );
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -82,7 +110,7 @@ async function deleteTestById(req, res) {
 
     res.json({ message: "Test deleted successfully" });
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -91,5 +119,6 @@ module.exports = {
   updateTestById,
   getTestById,
   getTests,
+  getAdminTests,
   deleteTestById,
 };

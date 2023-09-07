@@ -1,5 +1,5 @@
+import LevelTable from "@/app/components/ui/tables/LevelTable";
 import React from "react";
-import LevelTable from "../components/ui/tables/LevelTable";
 
 export default function LevelPage() {
   return (

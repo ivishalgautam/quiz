@@ -2,6 +2,7 @@ const { pool } = require("../config/db");
 
 async function createQuestion(req, res) {
   const { question, answer, testId } = req.body;
+  console.log(req.body);
   try {
     const { rows, rowCount } = await pool.query(
       `INSERT INTO questions (question, answer, test_id) VALUES ($1, $2, $3)`,
@@ -57,20 +58,18 @@ async function deleteQuestionById(req, res) {
   }
 }
 
-async function getQuestionById(req, res) {
-  const questionId = parseInt(req.params.questionId);
+async function getQuestionsByTestId(req, res) {
+  const testId = parseInt(req.params.testId);
 
   try {
-    const { rowCount } = await pool.query(
-      `SELECT * FROM questions WHERE id = $1`,
-      [questionId]
+    const { rows, rowCount } = await pool.query(
+      `SELECT * FROM questions WHERE test_id = $1`,
+      [testId]
     );
 
-    if (rowCount === 0)
-      return res.status(404).json({ message: "Question not found!" });
-
-    res.json(rows[0]);
+    res.json(rows);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -92,6 +91,6 @@ module.exports = {
   createQuestion,
   updateQuestionById,
   deleteQuestionById,
-  getQuestionById,
+  getQuestionsByTestId,
   getQuestions,
 };

@@ -1,5 +1,5 @@
 "use client";
-import { postData } from "@/app/hooks/postData";
+import { publicRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 import { toast } from "react-hot-toast";
@@ -9,12 +9,18 @@ export default function AddLevelPage() {
   const router = useRouter();
   async function handleFormSubmit(e) {
     e.preventDefault();
-    const { message } = await postData("/levels", {
-      name: inputRef.current.value,
-    });
-    if (message) {
-      toast.success(message);
-      router.push("/levels");
+    if (inputRef.current.value === "") {
+      return toast.error("Please enter level!");
+    }
+    try {
+      const resp = await publicRequest.post("/levels", {
+        name: inputRef.current.value,
+      });
+      console.log(resp);
+      toast.success(resp.data.message);
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.log(error);
     }
   }
   return (
@@ -27,10 +33,10 @@ export default function AddLevelPage() {
             id="name"
             className="my-input peer"
             placeholder="Level"
-            autocomplete="off"
+            autoComplete="off"
             ref={inputRef}
           />
-          <label for="name" className="my-label">
+          <label htmlFor="name" className="my-label">
             Level
           </label>
         </div>

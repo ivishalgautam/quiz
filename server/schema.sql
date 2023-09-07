@@ -17,14 +17,17 @@ CREATE TABLE levels(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TYPE subject_type AS ENUM ('abacus', 'vedic');
+
 CREATE TABLE tests(
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     level INT REFERENCES levels(id) ON DELETE CASCADE NOT NULL,
-    test_type test_type DEFAULT 'practice',
-    is_disabled BOOLEAN DEFAULT true,
+    test_type test_type NOT NULL,
+    subject subject_type NOT NULL,
+    is_published BOOLEAN DEFAULT false,
     start_time TIMESTAMP NOT NULL,
-    duration TIME NOT NULL,
+    duration VARCHAR(40) NOT NULL,
     instructions TEXT [] NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -36,10 +39,10 @@ UPDATE
 
 CREATE TABLE questions(
     id SERIAL PRIMARY KEY,
-    question INT [] DEFAULT '{}',
+    question VARCHAR(40) [] DEFAULT '{}',
     answer INT NOT NULL,
     test_id INT REFERENCES tests(id) ON DELETE CASCADE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE students(
