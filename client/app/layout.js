@@ -1,8 +1,6 @@
-import Sidebar from "./components/Sidebar";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import "@radix-ui/themes/styles.css";
-import { Theme } from "@radix-ui/themes";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,18 +13,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen`}>
-        <Theme>
-          <main className="h-screen">
-            <section className="grid grid-cols-5 h-full">
-              <div className="col-span-1">
-                <Sidebar />
-              </div>
-              <div className="col-span-4 bg-gray-100 p-8">{children}</div>
-            </section>
-            <Toaster />
-          </main>
-        </Theme>
+      <body className={`${inter.className} h-screen min-h-screen`}>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

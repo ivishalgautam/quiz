@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { publicRequest } from "../lib/requestMethods";
 import Link from "next/link";
+import { publicRequest } from "@/app/lib/requestMethods";
 
 const page = () => {
   const [tests, setTests] = useState([]);
@@ -56,7 +56,7 @@ const page = () => {
                 </table>
                 <div>
                   <Link
-                    href={`/my-tests/${test.id}`}
+                    href={`/student/my-tests/${test.id}`}
                     className="bg-primary hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold"
                   >
                     Start test

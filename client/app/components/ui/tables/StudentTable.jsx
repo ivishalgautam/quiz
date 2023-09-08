@@ -2,7 +2,7 @@
 import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 
@@ -11,7 +11,7 @@ export default function StudentTable() {
 
   useEffect(() => {
     async function getStudents() {
-      const resp = await publicRequest.get("/students");
+      const resp = await adminRequest.get("/students");
       console.log(resp.data);
       setStudents(resp.data);
     }
@@ -22,7 +22,7 @@ export default function StudentTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await publicRequest.delete(`/students/${id}`);
+      const resp = await adminRequest.delete(`/students/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setStudents((prev) => prev.filter((item) => item.id !== id));
@@ -30,6 +30,17 @@ export default function StudentTable() {
     }
   };
 
+  const generateCredentials = async (studentId) => {
+    try {
+      const resp = await adminRequest.post(`/credentials/${studentId}`);
+      if (resp.status === 200) {
+        toast.success(resp.data.message);
+        console.log(resp.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <div className="mb-4 flex justify-end">
@@ -49,6 +60,7 @@ export default function StudentTable() {
             <Table.ColumnHeaderCell>Phone</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>City</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Created At</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Credentials</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
@@ -57,6 +69,7 @@ export default function StudentTable() {
           {students?.length <= 0 ? (
             <Table.Row>
               <Table.Cell>No data found!</Table.Cell>
+              <Table.Cell></Table.Cell>
               <Table.Cell></Table.Cell>
               <Table.Cell></Table.Cell>
               <Table.Cell></Table.Cell>
@@ -75,6 +88,20 @@ export default function StudentTable() {
                   <Table.Cell>{student.city}</Table.Cell>
                   <Table.Cell>
                     {new Date(student.created_at).toDateString()}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {student.credentials_created ? (
+                      <button className="bg-primary px-3 py-1 rounded text-white">
+                        Already created
+                      </button>
+                    ) : (
+                      <button
+                        className="bg-primary px-3 py-1 rounded text-white"
+                        onClick={() => generateCredentials(student.id)}
+                      >
+                        Create
+                      </button>
+                    )}
                   </Table.Cell>
                   <Table.Cell>
                     <button>

@@ -8,32 +8,18 @@ import { CgNotes } from "react-icons/cg";
 const navList = [
   {
     name: "Dashboard",
-    path: "/admin/dashboard",
+    path: "/student/profile",
     icon: <MdOutlineDashboard />,
   },
-  {
-    name: "Tests",
-    path: "/admin/tests",
-    icon: <HiOutlinePencilAlt />,
-  },
-  {
-    name: "Levels",
-    path: "/admin/levels",
-    icon: <CgNotes />,
-  },
-  {
-    name: "Students",
-    path: "/admin/students",
-    icon: <ImProfile />,
-  },
+
   {
     name: "My tests",
-    path: "/my-tests",
+    path: "/student/my-tests",
     icon: <ImProfile />,
   },
 ];
 
-const Sidebar = () => {
+const StudentSidebar = () => {
   return (
     <aside className="w-full h-full bg-white shadow text-gray-900 space-y-4 p-4">
       <div>
@@ -60,4 +46,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default StudentSidebar;

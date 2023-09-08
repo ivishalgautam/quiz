@@ -12,11 +12,15 @@ app.use(cors());
 // admin
 app.use("/api/admin", require("./router/admin"));
 app.use("/api/admin/levels", require("./router/level"));
-app.use("/api/admin/students", require("./router/student"));
 
 // user
+app.use("/api/students", require("./router/student"));
 app.use("/api/questions", require("./router/question"));
 app.use("/api/tests", require("./router/test"));
+app.use("/api/results", require("./router/result"));
+
+// auth
+app.use("/api/auth", require("./router/auth"));
 
 app.listen(PORT, () => {
   console.log(`Server up at http://locathost:${PORT}`);

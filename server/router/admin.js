@@ -11,6 +11,12 @@ const {
   deleteQuestionById,
 } = require("../controller/question.controller");
 const {
+  deleteStudentById,
+  getStudents,
+  createStudent,
+  generateCredentials,
+} = require("../controller/student.controller");
+const {
   getAdminTests,
   createTest,
   getTestById,
@@ -18,6 +24,14 @@ const {
   deleteTestById,
 } = require("../controller/test.controller");
 const router = require("express").Router();
+
+// credentials
+router.post("/credentials/:studentId", generateCredentials);
+
+// students
+router.post("/students", createStudent);
+router.get("/students", getStudents);
+router.delete("/students/:studentId", deleteStudentById);
 
 // tests
 router.get("/tests", getAdminTests);
@@ -31,5 +45,9 @@ router.post("/questions/", createQuestion);
 router.get("/questions/", getQuestions);
 router.put("/questions/:questionId", updateQuestionById);
 router.delete("/questions/:questionId", deleteQuestionById);
+
+// student results
+router.get("/results");
+router.get("/results/:studentId");
 
 module.exports = router;

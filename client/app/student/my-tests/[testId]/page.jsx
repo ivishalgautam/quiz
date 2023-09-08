@@ -1,19 +1,20 @@
 "use client";
+import { getCookie } from "@/app/lib/cookies";
 import { publicRequest } from "@/app/lib/requestMethods";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 const Page = ({ params: { testId } }) => {
   const [points, setPoints] = useState({
-    userPoints: null,
     totalPoints: null,
   });
-  const [attempts, setAttempts] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  // console.log(questions, answers);
+  const [result, setResult] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
     (async function () {
@@ -42,36 +43,57 @@ const Page = ({ params: { testId } }) => {
     })();
   }, []);
 
-  function handleSubmitTest() {
+  async function handleSubmitTest() {
     let TP = 0;
+    let attempted = 0;
 
     for (let i = 0; i < answers.length; i++) {
-      if (Object.values(userAnswers)[i] !== undefined) {
-        // console.log(Object.values(userAnswers)[i]);
-        setAttempts((prev) => prev + 1);
+      if (
+        Object.values(userAnswers)[i] !== undefined &&
+        Object.values(userAnswers)[i] !== ""
+      ) {
+        attempted++;
       }
 
       if (answers[i] === parseInt(Object.values(userAnswers)[i])) {
-        // console.log(true);
         TP += 10;
       }
     }
 
-    console.log({ points: TP, attempts });
-    toast((t) => (
-      <div className="flex flex-col">
-        <div>
-          Your points: <b>{TP}</b>
-        </div>
-        <div>
-          Total points: <b>{points.totalPoints}</b>
-        </div>
-        <div>
-          Attempted: <b>{attempts}</b>
-        </div>
-      </div>
-    ));
+    try {
+      const resp = await publicRequest.post(`/results`, {
+        student_id: getCookie("student_id"),
+        test_id: testId,
+        student_points: TP,
+        total_points: points.totalPoints,
+        student_attempted: attempted,
+        total_questions: questions.length,
+      });
+      if (resp.status === 200) {
+        router.push(`/student/result/${getCookie("student_id")}`);
+      }
+      console.log(resp.data);
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log({ points: TP });
+
+    // toast((t) => (
+    //   <div className="flex flex-col">
+    //     <div>
+    //       Your points: <b>{TP}</b>
+    //     </div>
+    //     <div>
+    //       Total points: <b>{points.totalPoints}</b>
+    //     </div>
+    //     <div>
+    //       Attempted: <b>{attempted}</b>
+    //     </div>
+    //   </div>
+    // ));
   }
+
   return (
     <section>
       <div className="grid grid-cols-6 gap-4">

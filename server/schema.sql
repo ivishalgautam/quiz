@@ -11,6 +11,8 @@ $ $ LANGUAGE plpgsql;
 
 CREATE TYPE test_type AS ENUM ('practice', 'competitive');
 
+CREATE TYPE package_type AS ENUM ('golden', 'diamond');
+
 CREATE TABLE levels(
     id INT PRIMARY KEY NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -60,7 +62,9 @@ CREATE TABLE students(
     created_by VARCHAR(20) NOT NULL,
     is_subscribed BOOLEAN DEFAULT false,
     level_id INT REFERENCES levels(id) ON DELETE CASCADE NOT NULL,
+    package VARCHAR (40) package_type NOT NULL,
     is_disabled BOOLEAN DEFAULT false,
+    credentials_created BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -74,6 +78,16 @@ CREATE TABLE student_credentials(
     username VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
     student_id INT REFERENCES students(id) ON DELETE CASCADE NOT NULL,
-    is_disabled BOOLEAN DEFAULT false,
+    is_disabled BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE student_results(
+    id SERIAL PRIMARY KEY,
+    student_id INT REFERENCES students(id) NOT NULL,
+    test_id INT REFERENCES tests(id) NOT NULL,
+    student_points INT NOT NULL,
+    total_points INT NOT NULL,
+    student_attempted INT NOT NULL,
+    total_questions INT NOT NULL
 )

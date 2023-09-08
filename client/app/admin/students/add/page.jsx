@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { publicRequest } from "../../lib/requestMethods";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { publicRequest } from "@/app/lib/requestMethods";
 
 export default function CreateStudentPage() {
   const [inputVals, setInputVals] = useState({
@@ -18,13 +18,14 @@ export default function CreateStudentPage() {
     address: "",
     created_by: "",
     level_id: "",
+    package: "",
   });
   const [levels, setLevels] = useState([]);
 
   useEffect(() => {
     (async function () {
       try {
-        const resp = await publicRequest.get("/levels");
+        const resp = await publicRequest.get("/admin/levels");
         setLevels(resp.data);
       } catch (error) {
         console.log(error);
@@ -37,10 +38,12 @@ export default function CreateStudentPage() {
   async function handleFormSubmit(e) {
     e.preventDefault();
     try {
-      const resp = await publicRequest.post("/students", { ...inputVals });
+      const resp = await publicRequest.post("/admin/students", {
+        ...inputVals,
+      });
       if (resp.status === 200) {
         toast.success("Student created successfully.");
-        router.push("/students");
+        router.push("/admin/students");
       }
       console.log(resp.data);
     } catch (error) {
@@ -60,6 +63,7 @@ export default function CreateStudentPage() {
 
       <form onSubmit={handleFormSubmit}>
         <div className="grid grid-cols-3 gap-2">
+          {/* created by */}
           <div className="relative flex flex-col justify-end">
             <select
               name="created_by"
@@ -76,6 +80,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* level */}
           <div className="relative flex flex-col justify-end">
             <select
               name="level_id"
@@ -101,6 +106,26 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* package */}
+          <div className="relative flex flex-col justify-end">
+            <select
+              name="package"
+              id="package"
+              onChange={handleOnChange}
+              className="my-input"
+            >
+              <option disabled defaultValue>
+                Select package
+              </option>
+              <option value="golden">Golden</option>
+              <option value="diamond">Diamond</option>
+            </select>
+            <label htmlFor="package" className="my-label">
+              Package
+            </label>
+          </div>
+
+          {/* firstname */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -116,6 +141,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* lastname */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -131,6 +157,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* email */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -146,6 +173,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* phone */}
           <div className="relative flex flex-col justify-end">
             <input
               type="tel"
@@ -161,6 +189,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* father name */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -176,6 +205,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* mother name */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -191,6 +221,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* dob */}
           <div className="relative flex flex-col justify-end">
             <input
               type="date"
@@ -206,6 +237,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* city */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -221,6 +253,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* state */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
@@ -236,6 +269,7 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
+          {/* address */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
