@@ -70,7 +70,8 @@ async function getStudentResults(req, res) {
         JOIN 
             tests t on sr.test_id = t.id
         WHERE 
-            student_id = $1 `,
+            student_id = $1 
+        ORDER BY `,
 
       [studentId]
     );

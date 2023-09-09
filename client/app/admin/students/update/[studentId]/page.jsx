@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
-import { publicRequest } from "@/app/lib/requestMethods";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { AiFillDelete } from "react-icons/ai";
 
-export default function CreateStudentPage() {
+export default function StudentUpdate({ params: { studentId } }) {
   const [inputVals, setInputVals] = useState({
     firstname: "",
     lastname: "",
@@ -21,8 +22,22 @@ export default function CreateStudentPage() {
     package: "",
   });
   const [levels, setLevels] = useState([]);
+  //   console.log(inputVals);
 
   useEffect(() => {
+    (async function () {
+      try {
+        const resp = await publicRequest.get(`/students/${studentId}`);
+        for (const [key, value] of Object.entries(resp.data)) {
+          if (key in inputVals) {
+            setInputVals((prev) => ({ ...prev, [key]: value }));
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
     (async function () {
       try {
         const resp = await publicRequest.get("/admin/levels");
@@ -35,15 +50,15 @@ export default function CreateStudentPage() {
 
   const router = useRouter();
 
-  async function handleFormSubmit(e) {
+  async function handleUpdate(e) {
     e.preventDefault();
     try {
-      const resp = await publicRequest.post("/admin/students", {
+      const resp = await publicRequest.put(`/students/${studentId}`, {
         ...inputVals,
       });
       if (resp.status === 200) {
-        toast.success("Student created successfully.");
-        router.push("/admin/students");
+        toast.success("Student updated successfully.");
+        // router.push("/admin/students");
       }
       console.log(resp.data);
     } catch (error) {
@@ -56,12 +71,31 @@ export default function CreateStudentPage() {
     setInputVals((prev) => ({ ...prev, [name]: value }));
   }
 
-  console.log(inputVals);
+  const handleDelete = async (id) => {
+    const confirmation = confirm("Please confirm to delete.");
+
+    if (confirmation) {
+      const resp = await adminRequest.delete(`/students/${id}`);
+      if (resp.status === 200) {
+        toast.success(resp.data.message);
+        router.push("/admin/students");
+      }
+    }
+  };
+
   return (
     <section>
-      <h2 className="section-heading">Create Student</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="section-heading">Update Student</h2>
+        <button onClick={() => handleDelete(studentId)}>
+          <AiFillDelete
+            className="text-rose-500 hover:scale-110 transition-transform"
+            size={30}
+          />
+        </button>
+      </div>
 
-      <form onSubmit={handleFormSubmit}>
+      <form onSubmit={handleUpdate}>
         <div className="grid grid-cols-3 gap-2">
           {/* course */}
           <div className="relative flex flex-col justify-end">
@@ -70,6 +104,7 @@ export default function CreateStudentPage() {
               id="course"
               onChange={handleOnChange}
               className="my-input"
+              value={inputVals.course}
             >
               <option value="abacus">Abacus</option>
               <option value="vedic">Vedic</option>
@@ -86,6 +121,7 @@ export default function CreateStudentPage() {
               id="level_id"
               onChange={handleOnChange}
               className="my-input"
+              value={inputVals.level_id}
             >
               <option disabled>Select level</option>
               {levels.length <= 0 ? (
@@ -112,6 +148,7 @@ export default function CreateStudentPage() {
               id="package"
               onChange={handleOnChange}
               className="my-input"
+              value={inputVals.package}
             >
               <option disabled defaultValue>
                 Select package
@@ -133,6 +170,7 @@ export default function CreateStudentPage() {
               className="my-input peer"
               placeholder=""
               autoComplete="off"
+              value={inputVals.firstname}
               onChange={handleOnChange}
             />
             <label htmlFor="firstname" className="my-label">
@@ -149,6 +187,7 @@ export default function CreateStudentPage() {
               className="my-input peer"
               placeholder=""
               autoComplete="off"
+              value={inputVals.lastname}
               onChange={handleOnChange}
             />
             <label htmlFor="lastname" className="my-label">
@@ -164,6 +203,7 @@ export default function CreateStudentPage() {
               name="email"
               className="my-input peer"
               placeholder=""
+              value={inputVals.email}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -180,6 +220,7 @@ export default function CreateStudentPage() {
               name="phone"
               className="my-input peer"
               placeholder=""
+              value={inputVals.phone}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -196,6 +237,7 @@ export default function CreateStudentPage() {
               name="father_name"
               className="my-input peer"
               placeholder=""
+              value={inputVals.father_name}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -212,6 +254,7 @@ export default function CreateStudentPage() {
               name="mother_name"
               className="my-input peer"
               placeholder=""
+              value={inputVals.mother_name}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -228,6 +271,8 @@ export default function CreateStudentPage() {
               name="dob"
               className="my-input peer"
               placeholder=""
+              value={inputVals.dob.split("T")[0]}
+              //   min={new Date()}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -244,6 +289,7 @@ export default function CreateStudentPage() {
               name="city"
               className="my-input peer"
               placeholder=""
+              value={inputVals.city}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -260,6 +306,7 @@ export default function CreateStudentPage() {
               name="state"
               className="my-input peer"
               placeholder=""
+              value={inputVals.state}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -276,6 +323,7 @@ export default function CreateStudentPage() {
               name="address"
               className="my-input peer"
               placeholder=""
+              value={inputVals.address}
               onChange={handleOnChange}
               autoComplete="off"
             />
@@ -285,9 +333,9 @@ export default function CreateStudentPage() {
           </div>
         </div>
 
-        <div className="mb-4 flex justify-end">
-          <button className="bg-emerald-500 rounded-md py-1 mt-4 px-3 text-white">
-            Create Student
+        <div className="mb-4">
+          <button className="bg-emerald-500 rounded-md w-full mt-4 py-3 text-white">
+            Update
           </button>
         </div>
       </form>

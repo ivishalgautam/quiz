@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
+import { BsPencilSquare } from "react-icons/bs";
 import { toast } from "react-hot-toast";
 
 export default function StudentTable() {
@@ -104,13 +105,18 @@ export default function StudentTable() {
                     )}
                   </Table.Cell>
                   <Table.Cell>
-                    <button>
-                      <AiOutlineDelete
-                        size={20}
-                        className="text-rose-500"
-                        onClick={() => handleDelete(student.id)}
-                      />
-                    </button>
+                    <div className="flex items-center justify-center gap-1">
+                      <Link href={`/admin/students/update/${student.id}`}>
+                        <BsPencilSquare size={20} />
+                      </Link>
+                      <button>
+                        <AiOutlineDelete
+                          size={20}
+                          className="text-rose-500"
+                          onClick={() => handleDelete(student.id)}
+                        />
+                      </button>
+                    </div>
                   </Table.Cell>
                 </Table.Row>
               );

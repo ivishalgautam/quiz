@@ -16,3 +16,11 @@ export function checkCookie(name) {
   let tokenExist = cookies.includes(name);
   return tokenExist;
 }
+
+export function clearAllCookies() {
+  document.cookie.split(";").forEach(function (cookie) {
+    document.cookie =
+      cookie.replace(/^ +/, "").split("=")[0] +
+      "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  });
+}

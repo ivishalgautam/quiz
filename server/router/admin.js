@@ -15,6 +15,7 @@ const {
   getStudents,
   createStudent,
   generateCredentials,
+  getStudentById,
 } = require("../controller/student.controller");
 const {
   getAdminTests,

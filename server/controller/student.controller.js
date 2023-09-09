@@ -17,13 +17,13 @@ async function createStudent(req, res) {
     city,
     state,
     address,
-    created_by,
+    course,
     package,
     level_id,
   } = req.body;
   try {
     const { rows, rowCount } = await pool.query(
-      `INSERT INTO students (firstname, lastname, email, phone, father_name, mother_name, dob, city, state, address, created_by, package, level_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *`,
+      `INSERT INTO students (firstname, lastname, email, phone, father_name, mother_name, dob, city, state, address, course, package, level_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *`,
       [
         firstname,
         lastname,
@@ -35,7 +35,7 @@ async function createStudent(req, res) {
         city,
         state,
         address,
-        created_by,
+        course,
         package,
         level_id,
       ]
@@ -59,7 +59,7 @@ async function updateStudentById(req, res) {
 
   try {
     const { rows, rowCount } = await pool.query(
-      `UPDATE students SET ${updateColumns} WHERE id = ${
+      `UPDATE students SET ${updateColumns} WHERE id = $${
         updateValues.length + 1
       } returning *`,
       [...updateValues, studentId]
