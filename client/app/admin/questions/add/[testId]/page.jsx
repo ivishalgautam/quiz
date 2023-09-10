@@ -1,17 +1,14 @@
 "use client";
 import Question from "@/app/components/template/Question";
-import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
-import React, { useEffect, useState } from "react";
+import { adminRequest } from "@/app/lib/requestMethods";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { MdAddCircleOutline } from "react-icons/md";
 
 export default function page({ params: { testId } }) {
   const [options, setOptions] = useState({});
   const [inputs, setInputs] = useState({
     answer: null,
   });
-  // const [answer, setAnswer] = useState(null);
-  // console.log(inputs.values);
 
   async function handleFormSubmit(e) {
     e.preventDefault();
@@ -58,9 +55,7 @@ export default function page({ params: { testId } }) {
       <div className="flex flex-col">
         <div className="mt-4">
           <div className="flex flex-col gap-y-2 col-span-1">
-            <div className="grid grid-cols-6 gap-4 items-center justify-center">
-              <Question />
-            </div>
+            <Question />
             <button className="bg-primary text-white rounded-md py-2">
               Submit
             </button>

@@ -15,7 +15,7 @@ const Question = () => {
       answer: "",
     }))
   );
-  useEffect(() => {}, []);
+  // useEffect(() => {}, []);
   console.log(questionStates, inputLength);
 
   const handleQuestionInputChange = (e, index) => {
@@ -45,9 +45,26 @@ const Question = () => {
       return updatedStates;
     });
   };
+
+  const handleAddQuestion = () => {
+    setInputLength((prev) => prev + 1);
+
+    setQuestionStates((prevStates) => [
+      ...prevStates,
+      {
+        values: {
+          value1: "",
+          value2: "",
+          value3: "",
+          value4: "",
+        },
+        answer: "",
+      },
+    ]);
+  };
   return (
     <>
-      <div>
+      <div className="grid grid-cols-6 gap-4">
         {questionStates.map((questionState, index) => (
           <div key={index}>
             <p className="text-center">{`Question No. - ${index + 1}`}</p>
@@ -83,14 +100,11 @@ const Question = () => {
             </div>
           </div>
         ))}
-      </div>
-      <div>
-        <button
-          type="button"
-          onClick={() => setInputLength((prev) => prev + 1)}
-        >
-          <GrAddCircle size={50} />
-        </button>
+        <div className="flex items-center justify-center">
+          <button type="button" onClick={() => handleAddQuestion()}>
+            <GrAddCircle size={50} />
+          </button>
+        </div>
       </div>
     </>
   );
