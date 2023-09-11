@@ -74,13 +74,36 @@ async function getTestById(req, res) {
   }
 }
 
-// admin
-async function getAdminTests(req, res) {
+async function getStudentTestsByCategory(req, res) {
+  const studentId = parseInt(req.params.studentId);
   try {
-    const { rows, rowCount } = await pool.query(`SELECT * FROM tests`);
+    const student = await pool.query(`SELECT * FROM students WHERE id = $1`, [
+      studentId,
+    ]);
+    if (student.rowCount === 0)
+      return res.status(404).json({ message: "Student not exist!" });
 
-    res.json(rows);
+    const package = student.rows[0].package;
+    console.log(package);
+
+    const allTests = await pool.query(`SELECT * FROM tests;`);
+
+    let tests;
+    let filteredTests;
+
+    if (package === "golden") {
+      filteredTests = allTests.rows.filter(
+        (item) => item.test_type === "practice"
+      );
+      tests = filteredTests;
+    }
+
+    if (package === "diamond") {
+      tests = allTests.rows;
+    }
+    res.json(tests);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -114,6 +137,17 @@ async function deleteTestById(req, res) {
   }
 }
 
+// admin
+async function getAdminTests(req, res) {
+  try {
+    const { rows, rowCount } = await pool.query(`SELECT * FROM tests`);
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   createTest,
   updateTestById,
@@ -121,4 +155,5 @@ module.exports = {
   getTests,
   getAdminTests,
   deleteTestById,
+  getStudentTestsByCategory,
 };

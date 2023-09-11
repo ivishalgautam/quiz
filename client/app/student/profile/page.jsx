@@ -74,8 +74,8 @@ export default function ProfilePage() {
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-primary">Course</h4>
-              <p className="text-sm capitalize">{details?.course}</p>
+              <h4 className="font-bold text-primary">Subject</h4>
+              <p className="text-sm capitalize">{details?.subject}</p>
             </div>
           </div>
         </div>

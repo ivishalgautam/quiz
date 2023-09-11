@@ -1,23 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import toast from "react-hot-toast";
+import { AiOutlineDelete } from "react-icons/ai";
 import { GrAddCircle } from "react-icons/gr";
 
-const Question = () => {
-  const [inputLength, setInputLength] = useState(1);
-  const [questionStates, setQuestionStates] = useState(
-    Array.from({ length: inputLength }, () => ({
-      values: {
-        value1: "",
-        value2: "",
-        value3: "",
-        value4: "",
-      },
-      answer: "",
-    }))
-  );
-  // useEffect(() => {}, []);
-  console.log(questionStates, inputLength);
-
+const Question = ({ questionStates, setQuestionStates }) => {
   const handleQuestionInputChange = (e, index) => {
     const { name, value } = e.target;
 
@@ -47,7 +34,8 @@ const Question = () => {
   };
 
   const handleAddQuestion = () => {
-    setInputLength((prev) => prev + 1);
+    if (questionStates.length >= 100)
+      return toast.error("You can not add more than 100 questions!");
 
     setQuestionStates((prevStates) => [
       ...prevStates,
@@ -57,33 +45,46 @@ const Question = () => {
           value2: "",
           value3: "",
           value4: "",
+          value5: "",
         },
         answer: "",
       },
     ]);
   };
+
+  function handleDeleteQuestion(index) {
+    setQuestionStates((prev) => prev.filter((item, ind) => ind !== index));
+  }
   return (
     <>
       <div className="grid grid-cols-6 gap-4">
         {questionStates.map((questionState, index) => (
-          <div key={index}>
-            <p className="text-center">{`Question No. - ${index + 1}`}</p>
+          <div key={index} className="question-box">
+            <div className="flex justify-between items-center">
+              <p className="">{`Question No. - ${index + 1}`}</p>
+              <button
+                type="button"
+                className="bg-rose-500 p-2 rounded"
+                onClick={() => handleDeleteQuestion(index)}
+              >
+                <AiOutlineDelete className="text-white" />
+              </button>
+            </div>
             {Object.keys(questionState.values).map((key) => (
-              <div className="relative flex flex-col justify-end" key={key}>
+              <div className="inputGroup" key={key}>
                 <input
                   name={key}
-                  type="text"
                   value={questionState.values[key]}
-                  className="my-input peer bg-white text-gray-950"
-                  placeholder="type here"
                   onChange={(e) => handleQuestionInputChange(e, index)}
+                  type="text"
+                  required=""
+                  autocomplete="off"
                 />
-                <label htmlFor={key} className="my-label">
-                  Value
-                </label>
+                <label htmlFor={key}>Value</label>
               </div>
             ))}
-            <div className="relative flex flex-col justify-end">
+            <hr />
+            <div className="inputGroup mb-0">
               <input
                 type="text"
                 id={`answer${index}`}
@@ -100,10 +101,14 @@ const Question = () => {
             </div>
           </div>
         ))}
-        <div className="flex items-center justify-center">
-          <button type="button" onClick={() => handleAddQuestion()}>
+        <div
+          className="flex items-center justify-center add-question cursor-pointer"
+          onClick={() => handleAddQuestion()}
+        >
+          <button type="button">
             <GrAddCircle size={50} />
           </button>
+          <h4>Add Question</h4>
         </div>
       </div>
     </>

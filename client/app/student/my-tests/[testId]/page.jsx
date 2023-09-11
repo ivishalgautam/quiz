@@ -15,12 +15,12 @@ const Page = ({ params: { testId } }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState({});
   const router = useRouter();
+  console.log(answers);
 
   useEffect(() => {
     (async function () {
       setIsLoading(true);
       try {
-        // await new Promise((resole) => setTimeout(resole, 2000));
         const { data } = await publicRequest.get(`/questions/${testId}`);
         setQuestions(data);
         setAnswers(data.map((item) => item.answer));
@@ -78,20 +78,6 @@ const Page = ({ params: { testId } }) => {
     }
 
     console.log({ points: TP });
-
-    // toast((t) => (
-    //   <div className="flex flex-col">
-    //     <div>
-    //       Your points: <b>{TP}</b>
-    //     </div>
-    //     <div>
-    //       Total points: <b>{points.totalPoints}</b>
-    //     </div>
-    //     <div>
-    //       Attempted: <b>{attempted}</b>
-    //     </div>
-    //   </div>
-    // ));
   }
 
   return (

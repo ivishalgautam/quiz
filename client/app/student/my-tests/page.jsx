@@ -2,13 +2,21 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { publicRequest } from "@/app/lib/requestMethods";
+import { getCookie } from "@/app/lib/cookies";
 
 const page = () => {
   const [tests, setTests] = useState([]);
   useEffect(() => {
     (async function () {
-      const { data } = await publicRequest.get("/tests");
-      setTests(data);
+      try {
+        const { data } = await publicRequest.get(
+          `/tests/${getCookie("student_id")}`
+        );
+        console.log(data);
+        setTests(data);
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, []);
 
@@ -21,7 +29,10 @@ const page = () => {
         ) : (
           tests?.map((test) => {
             return (
-              <div className="bg-white p-6 max-w-[30rem] rounded-md gap-y-4">
+              <div
+                key={test.id}
+                className="bg-white p-6 max-w-[30rem] rounded-md gap-y-4"
+              >
                 <div className="flex items-center justify-between font-bold text-xl">
                   <div className="capitalize">{`${test.test_type} test`}</div>
                   <div>{`Time duration: ${test.duration}`}</div>

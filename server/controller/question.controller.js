@@ -1,14 +1,26 @@
 const { pool } = require("../config/db");
 
 async function createQuestion(req, res) {
-  const { question, answer, testId } = req.body;
-  console.log(req.body);
+  const { data, testId } = req.body;
+  // console.log(req.body);
+
   try {
-    const { rows, rowCount } = await pool.query(
-      `INSERT INTO questions (question, answer, test_id) VALUES ($1, $2, $3)`,
-      [question, answer, parseInt(testId)]
-    );
-    res.json({ message: "Question created successfully." });
+    await pool.query("DELETE FROM questions WHERE test_id = $1", [testId]);
+
+    const questionRows = [];
+    data.forEach(async (item) => {
+      for (const [key, value] of Object.entries(item)) {
+        if (typeof value === "object") {
+          const { rows } = await pool.query(
+            `INSERT INTO questions (question, answer, test_id) VALUES ($1, $2, $3)`,
+            [Object.values(value), item["answer"], parseInt(testId)]
+          );
+          questionRows.push(rows[0]);
+        }
+      }
+    });
+
+    res.json({ message: "Questions added successfully." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

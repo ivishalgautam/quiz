@@ -162,7 +162,7 @@ export default function AddTestPage() {
             >
               <option hidden></option>
               <option value="practice">Practice</option>
-              <option value="competition">Competition</option>
+              <option value="competitive">Competition</option>
             </select>
             <label htmlFor="test_type" className="my-label">
               Test type

@@ -16,7 +16,7 @@ export default function CreateStudentPage() {
     city: "",
     state: "",
     address: "",
-    course: "",
+    subject: "",
     level_id: "",
     package: "",
   });
@@ -63,19 +63,19 @@ export default function CreateStudentPage() {
 
       <form onSubmit={handleFormSubmit}>
         <div className="grid grid-cols-3 gap-2">
-          {/* course */}
+          {/* subject */}
           <div className="relative flex flex-col justify-end">
             <select
-              name="course"
-              id="course"
+              name="subject"
+              id="subject"
               onChange={handleOnChange}
               className="my-input"
             >
               <option value="abacus">Abacus</option>
               <option value="vedic">Vedic</option>
             </select>
-            <label htmlFor="course" className="my-label">
-              Course
+            <label htmlFor="subject" className="my-label">
+              Subject
             </label>
           </div>
 

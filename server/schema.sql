@@ -13,13 +13,13 @@ CREATE TYPE test_type AS ENUM ('practice', 'competitive');
 
 CREATE TYPE package_type AS ENUM ('golden', 'diamond');
 
+CREATE TYPE subject_type AS ENUM ('abacus', 'vedic');
+
 CREATE TABLE levels(
     id INT PRIMARY KEY NOT NULL,
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TYPE subject_type AS ENUM ('abacus', 'vedic');
 
 CREATE TABLE tests(
     id SERIAL PRIMARY KEY,
@@ -59,7 +59,7 @@ CREATE TABLE students(
     city VARCHAR(100) NOT NULL,
     state VARCHAR(100) NOT NULL,
     address TEXT NOT NULL,
-    course VARCHAR(100) NOT NULL,
+    subject subject_type NOT NULL,
     is_subscribed BOOLEAN DEFAULT false,
     level_id INT REFERENCES levels(id) ON DELETE CASCADE NOT NULL,
     package package_type NOT NULL,
@@ -84,8 +84,8 @@ CREATE TABLE student_credentials(
 
 CREATE TABLE student_results(
     id SERIAL PRIMARY KEY,
-    student_id INT REFERENCES students(id) NOT NULL,
-    test_id INT REFERENCES tests(id) NOT NULL,
+    student_id INT REFERENCES students(id) ON DELETE CASCADE NOT NULL,
+    test_id INT REFERENCES tests(id) ON DELETE CASCADE NOT NULL,
     student_points INT NOT NULL,
     total_points INT NOT NULL,
     student_attempted INT NOT NULL,
