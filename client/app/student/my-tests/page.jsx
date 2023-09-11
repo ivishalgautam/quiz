@@ -22,7 +22,6 @@ const page = () => {
 
   return (
     <>
-      <p>{JSON.stringify(tests)}</p>
       <section className="grid grid-cols-2">
         {tests.length <= 0 ? (
           <div>You don't have any test</div>
@@ -62,6 +61,12 @@ const page = () => {
                       <td className="p-2 w-[70%]">
                         {new Date(test.start_time).toUTCString()}
                       </td>
+                    </tr>
+                    <tr className="w-full flex border-b">
+                      <th className="py-2 bg-gray-300 w-[30%]">
+                        Total number questions
+                      </th>
+                      <td className="p-2 w-[70%]">{test.total_questions}</td>
                     </tr>
                   </tbody>
                 </table>

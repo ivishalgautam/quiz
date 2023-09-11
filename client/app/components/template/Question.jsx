@@ -52,9 +52,9 @@ const Question = ({ questionStates, setQuestionStates }) => {
     ]);
   };
 
-  function handleDeleteQuestion(index) {
+  const handleDeleteQuestion = (index) => {
     setQuestionStates((prev) => prev.filter((item, ind) => ind !== index));
-  }
+  };
   return (
     <>
       <div className="grid grid-cols-6 gap-4">

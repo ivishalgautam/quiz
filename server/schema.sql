@@ -89,5 +89,6 @@ CREATE TABLE student_results(
     student_points INT NOT NULL,
     total_points INT NOT NULL,
     student_attempted INT NOT NULL,
-    total_questions INT NOT NULL
+    total_questions INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

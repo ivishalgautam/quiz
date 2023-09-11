@@ -86,7 +86,16 @@ async function getStudentTestsByCategory(req, res) {
     const package = student.rows[0].package;
     console.log(package);
 
-    const allTests = await pool.query(`SELECT * FROM tests;`);
+    const allTests = await pool.query(
+      `SELECT t.*, q.total_questions
+      FROM tests AS t
+      JOIN (
+          SELECT test_id, COUNT(*) AS total_questions
+          FROM questions
+          GROUP BY test_id
+      ) AS q
+      ON t.id = q.test_id;`
+    );
 
     let tests;
     let filteredTests;
