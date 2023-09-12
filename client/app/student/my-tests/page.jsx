@@ -72,7 +72,7 @@ const page = () => {
                 </table>
                 <div>
                   <Link
-                    href={`/student/my-tests/${test.id}`}
+                    href={`/student/my-tests/instructions/${test.id}`}
                     className="bg-primary hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold"
                   >
                     Start test

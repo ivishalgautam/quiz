@@ -1,11 +1,15 @@
 "use client";
 import { getCookie } from "@/app/lib/cookies";
 import { publicRequest } from "@/app/lib/requestMethods";
+import { formatTime } from "@/app/lib/time";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 const Page = ({ params: { testId } }) => {
+  const [shouldSubmit, setShouldSubmit] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [isRunning, setIsRunning] = useState(true);
   const [points, setPoints] = useState({
     totalPoints: null,
   });
@@ -13,37 +17,10 @@ const Page = ({ params: { testId } }) => {
   const [answers, setAnswers] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState({});
   const router = useRouter();
-  console.log(answers);
-
-  useEffect(() => {
-    (async function () {
-      setIsLoading(true);
-      try {
-        const { data } = await publicRequest.get(`/questions/${testId}`);
-        setQuestions(data);
-        setAnswers(data.map((item) => item.answer));
-        const userAnswersObj = {};
-
-        for (let i = 0; i < data?.length; i++) {
-          if (data[i]?.id in userAnswersObj) {
-            return;
-          }
-          userAnswersObj[data[i]?.id] = undefined;
-        }
-
-        setUserAnswers(userAnswersObj);
-        setPoints((prev) => ({ ...prev, totalPoints: data?.length * 10 }));
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
-    })();
-  }, []);
 
   async function handleSubmitTest() {
+    console.log(points.totalPoints);
     let TP = 0;
     let attempted = 0;
 
@@ -56,11 +33,19 @@ const Page = ({ params: { testId } }) => {
       }
 
       if (answers[i] === parseInt(Object.values(userAnswers)[i])) {
-        TP += 10;
+        TP += 1;
       }
     }
 
     try {
+      console.log({
+        student_id: getCookie("student_id"),
+        test_id: testId,
+        student_points: TP,
+        total_points: points.totalPoints,
+        student_attempted: attempted,
+        total_questions: questions.length,
+      });
       const resp = await publicRequest.post(`/results`, {
         student_id: getCookie("student_id"),
         test_id: testId,
@@ -72,16 +57,85 @@ const Page = ({ params: { testId } }) => {
       if (resp.status === 200) {
         router.push(`/student/result/${getCookie("student_id")}`);
       }
-      console.log(resp.data);
     } catch (error) {
       console.log(error);
     }
-
-    console.log({ points: TP });
   }
+
+  useEffect(() => {
+    (async function () {
+      setIsLoading(true);
+      try {
+        const { data } = await publicRequest.get(`/questions/${testId}`);
+        setQuestions(data);
+        console.log(data);
+        setAnswers(data.map((item) => item.answer));
+        const userAnswersObj = {};
+
+        for (let i = 0; i < data?.length; i++) {
+          if (data[i]?.id in userAnswersObj) {
+            return;
+          }
+          userAnswersObj[data[i]?.id] = undefined;
+        }
+
+        setUserAnswers(userAnswersObj);
+        setPoints((prev) => ({ ...prev, totalPoints: data.length * 1 }));
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+      }
+    })();
+
+    (async function () {
+      const { data } = await publicRequest.get(`/tests/instructions/${testId}`);
+      const timeArr = data?.duration?.split(" ");
+      if (timeArr && timeArr[1] === "minute") {
+        setDuration(timeArr[0] * 60 * 1000);
+      }
+
+      if (timeArr && timeArr[1] === "hour") {
+        setDuration(timeArr[0] * 60 * 60 * 1000);
+      }
+    })();
+  }, []);
+
+  console.log("duration", duration);
+
+  useEffect(() => {
+    let interval;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setDuration((prevSeconds) => {
+          if (prevSeconds === 0) {
+            setIsRunning(false);
+            setShouldSubmit(true);
+            return 0;
+          }
+          return prevSeconds - 1000;
+        });
+      }, 1000); // Update every 1 second (1000 milliseconds)
+    } else {
+      clearInterval(interval);
+    }
+    return () => {
+      clearInterval(interval); // Cleanup the interval when the component unmounts
+    };
+  }, [isRunning]);
+
+  // Use this useEffect to handle submission when shouldSubmit is true
+  useEffect(() => {
+    if (shouldSubmit) {
+      handleSubmitTest();
+    }
+  }, [shouldSubmit]);
 
   return (
     <section>
+      <p className="text-xl font-bold mb-8 text-end">{`Time: ${formatTime(
+        duration
+      )}`}</p>
       <div className="grid grid-cols-6 gap-4">
         {isLoading ? (
           Array.from({ length: 30 }).map((_, key) => {
@@ -107,7 +161,7 @@ const Page = ({ params: { testId } }) => {
                       className="flex justify-end text-lg font-bold"
                       key={key}
                     >
-                      {item}
+                      {question.every((num) => num >= 0) ? `+${item}` : item}
                     </div>
                   );
                 })}

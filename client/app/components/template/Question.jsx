@@ -90,14 +90,12 @@ const Question = ({ questionStates, setQuestionStates }) => {
                 id={`answer${index}`}
                 name={`answer${index}`}
                 value={questionState.answer}
-                className="my-input peer"
+                className=""
                 placeholder=""
                 autoComplete="off"
                 onChange={(e) => handleAnswerInputChange(e, index)}
               />
-              <label htmlFor={`answer${index}`} className="my-label">
-                Answer
-              </label>
+              <label htmlFor={`answer${index}`}>Answer</label>
             </div>
           </div>
         ))}

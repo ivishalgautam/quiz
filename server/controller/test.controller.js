@@ -74,6 +74,30 @@ async function getTestById(req, res) {
   }
 }
 
+async function getTestInstructionsById(req, res) {
+  const testId = parseInt(req.params.testId);
+
+  try {
+    const testDisabled = await pool.query(`SELECT * FROM tests WHERE id = $1`, [
+      testId,
+    ]);
+    if (!testDisabled.rows[0].is_published) {
+      return res.json([]);
+    }
+
+    const { rows, rowCount } = await pool.query(
+      `SELECT id, instructions, duration FROM tests WHERE id = $1`,
+      [testId]
+    );
+
+    if (rowCount === 0) return res.status(404).json("Test not found!");
+
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 async function getStudentTestsByCategory(req, res) {
   const studentId = parseInt(req.params.studentId);
   try {
@@ -88,13 +112,14 @@ async function getStudentTestsByCategory(req, res) {
 
     const allTests = await pool.query(
       `SELECT t.*, q.total_questions
-      FROM tests AS t
-      JOIN (
-          SELECT test_id, COUNT(*) AS total_questions
-          FROM questions
-          GROUP BY test_id
-      ) AS q
-      ON t.id = q.test_id;`
+        FROM tests AS t
+        JOIN (
+            SELECT test_id, COUNT(*) AS total_questions
+            FROM questions
+            GROUP BY test_id
+        ) AS q
+        ON t.id = q.test_id
+        WHERE t.is_published = true;`
     );
 
     let tests;
@@ -149,8 +174,14 @@ async function deleteTestById(req, res) {
 // admin
 async function getAdminTests(req, res) {
   try {
-    const { rows, rowCount } = await pool.query(`SELECT * FROM tests`);
-
+    const { rows, rowCount } = await pool.query(`
+      SELECT t.*, q.total_questions FROM tests AS t
+      LEFT JOIN (
+        SELECT test_id, COUNT(*) AS total_questions
+        FROM questions
+        GROUP BY test_id
+      ) AS q ON t.id = q.test_id`);
+    // const { rows } = await pool.query(`SELECT * FROM tests`);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -165,4 +196,5 @@ module.exports = {
   getAdminTests,
   deleteTestById,
   getStudentTestsByCategory,
+  getTestInstructionsById,
 };

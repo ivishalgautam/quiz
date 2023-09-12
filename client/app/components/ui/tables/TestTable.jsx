@@ -39,6 +39,7 @@ export default function TestTable() {
         return item;
       })
     );
+
     try {
       const resp = await adminRequest.put(`/tests/${id}`, { ...data });
 
@@ -72,6 +73,7 @@ export default function TestTable() {
           <Table.Row>
             <Table.ColumnHeaderCell>Id</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Questions</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Level</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Type</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Subject</Table.ColumnHeaderCell>
@@ -100,6 +102,7 @@ export default function TestTable() {
                 <Table.Row key={test.id}>
                   <Table.RowHeaderCell>{test.id}</Table.RowHeaderCell>
                   <Table.Cell>{test.name}</Table.Cell>
+                  <Table.Cell>{test.total_questions ?? 0}</Table.Cell>
                   <Table.Cell>{test.level}</Table.Cell>
                   <Table.Cell>{test.test_type}</Table.Cell>
                   <Table.Cell>{test.subject}</Table.Cell>
