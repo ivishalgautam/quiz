@@ -1,5 +1,6 @@
 "use client";
 import Question from "@/app/components/template/Question";
+import { getCookie } from "@/app/lib/cookies";
 import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -21,10 +22,18 @@ export default function page({ params: { testId } }) {
   async function handleFormSubmit(e) {
     e.preventDefault();
     try {
-      const resp = await adminRequest.post("/questions", {
-        data: questionStates,
-        testId,
-      });
+      const resp = await adminRequest.post(
+        "/questions",
+        {
+          data: questionStates,
+          testId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
 
       if (resp.status === 200) {
         toast.success(resp.data.message);

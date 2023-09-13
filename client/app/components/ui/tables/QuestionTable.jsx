@@ -2,16 +2,21 @@
 import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
+import { getCookie } from "@/app/lib/cookies";
 
 export default function QuestionTable() {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
     async function getStudents() {
-      const resp = await publicRequest.get("/questions");
+      const resp = await adminRequest.get("/questions", {
+        headers: {
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      });
       console.log(resp.data);
       setStudents(resp.data);
     }
@@ -22,7 +27,11 @@ export default function QuestionTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await publicRequest.delete(`/students/${id}`);
+      const resp = await adminRequest.delete(`/students/${id}`, {
+        headers: {
+          Authorization: getCookie("token"),
+        },
+      });
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setStudents((prev) => prev.filter((item) => item.id !== id));

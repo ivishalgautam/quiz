@@ -31,7 +31,7 @@ const StudentSidebar = () => {
   const router = useRouter();
   function handleLogout() {
     clearAllCookies();
-    router.push("/auth/login");
+    router.push("/auth/login/student");
   }
 
   return (

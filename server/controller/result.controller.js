@@ -8,12 +8,13 @@ async function createResult(req, res) {
     total_points,
     student_attempted,
     total_questions,
+    grade,
   } = req.body;
   console.log(req.body);
   try {
     const result = await pool.query(
-      `INSERT INTO student_results (student_id, test_id, student_points, total_points, student_attempted, total_questions)
-       VALUES ($1, $2, $3, $4, $5, $6) returning *`,
+      `INSERT INTO student_results (student_id, test_id, student_points, total_points, student_attempted, total_questions, grade)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) returning *`,
       [
         student_id,
         test_id,
@@ -21,6 +22,7 @@ async function createResult(req, res) {
         total_points,
         student_attempted,
         total_questions,
+        grade,
       ]
     );
     // console.log(result.rows);

@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} h-screen min-h-screen`}>
-        <Theme>{children}</Theme>
+        <Theme className="h-full">{children}</Theme>
         <Toaster />
       </body>
     </html>

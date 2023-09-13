@@ -125,4 +125,14 @@
     height: 1.2em;
     bottom: 0;
   }
+
+  .dashboard-mini-card {
+    @apply p-4 rounded-lg;
+  }
+  .dashboard-mini-card > h2 {
+    @apply text-lg font-bold;
+  }
+  .dashboard-mini-card > p {
+    @apply text-3xl font-bold;
+  }
 }

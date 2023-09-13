@@ -6,16 +6,29 @@ import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { BsPencilSquare } from "react-icons/bs";
 import { toast } from "react-hot-toast";
+import { getCookie } from "@/app/lib/cookies";
+
+import Handsontable from "handsontable/base";
+import { registerAllModules } from "handsontable/registry";
+
+registerAllModules();
+import "handsontable/dist/handsontable.full.min.css";
+import { HotTable } from "@handsontable/react";
 
 export default function StudentTable() {
   const [students, setStudents] = useState([]);
 
+  async function getStudents() {
+    const resp = await adminRequest.get("/students", {
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    });
+    console.log(resp.data);
+    setStudents(resp.data);
+  }
+
   useEffect(() => {
-    async function getStudents() {
-      const resp = await adminRequest.get("/students");
-      console.log(resp.data);
-      setStudents(resp.data);
-    }
     getStudents();
   }, []);
 
@@ -23,7 +36,11 @@ export default function StudentTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/students/${id}`);
+      const resp = await adminRequest.delete(`/students/${id}`, {
+        headers: {
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      });
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setStudents((prev) => prev.filter((item) => item.id !== id));
@@ -31,36 +48,124 @@ export default function StudentTable() {
     }
   };
 
-  const generateCredentials = async (studentId) => {
+  async function generateCredentials(studentId) {
     try {
-      const resp = await adminRequest.post(`/credentials/${studentId}`);
+      const resp = await adminRequest.post(`/credentials/${studentId}`, null, {
+        headers: { Authorization: `Bearer ${getCookie("token")}` },
+      });
       if (resp.status === 200) {
         toast.success(resp.data.message);
         console.log(resp.data);
+        setStudents((prev) =>
+          prev.map((item) => {
+            if (item.id === studentId) {
+              return { ...item, is_subscribed: true };
+            }
+            return item;
+          })
+        );
       }
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+  async function updateStudent({ id, data }) {
+    setStudents((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          return { ...item, is_disabled: data.is_disabled };
+        }
+        return item;
+      })
+    );
+
+    try {
+      const resp = await adminRequest.put(
+        `/students/${id}`,
+        { ...data },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
+
+      console.log(resp.data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Some error occurred while updating!");
+      setStudents((prev) =>
+        prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, is_subscribed: !data.is_subscribed };
+          }
+          return item;
+        })
+      );
+    }
+  }
+
+  const data = [
+    { id: 1, name: "Ted Right", address: "" },
+    { id: 2, name: "Frank Honest", address: "" },
+    { id: 3, name: "Joan Well", address: "" },
+    { id: 4, name: "Gail Polite", address: "" },
+    { id: 5, name: "Michael Fair", address: "" },
+  ];
+
   return (
     <>
-      <div className="mb-4 flex justify-end">
-        <Link
-          href={`/admin/students/add`}
-          className="bg-emerald-500 rounded-md py-1 px-3 text-white"
-        >
-          Add Student
-        </Link>
+      <div className="mb-4 flex justify-between">
+        <div>
+          <div className="inputGroup">
+            <input
+              type="text"
+              onChange={(e) => handleSearch(e)}
+              placeholder="search"
+              name="search"
+            />
+          </div>
+        </div>
+        <div>
+          <Link
+            href={`/admin/students/add`}
+            className="bg-emerald-500 rounded-md py-1 px-3 text-white"
+          >
+            Add Student
+          </Link>
+        </div>
       </div>
-      <Table.Root>
+      <HotTable
+        data={students}
+        rowHeaders={true}
+        filters={true}
+        colHeaders={[
+          "Company name",
+          "Name",
+          "Sell date",
+          "In stock",
+          "Qty",
+          "Progress",
+          "Rating",
+          "Order ID",
+          "Country",
+          "asdasdasd",
+        ]}
+        height="auto"
+        dropdownMenu={true}
+        licenseKey="non-commercial-and-evaluation" // for non-commercial use only
+      />
+      {/* <Table.Root>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Id</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Phone</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>City</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Created At</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Disable</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Credentials</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
           </Table.Row>
@@ -79,10 +184,10 @@ export default function StudentTable() {
               <Table.Cell></Table.Cell>
             </Table.Row>
           ) : (
-            students?.map((student) => {
+            students?.map((student, key) => {
               return (
                 <Table.Row key={student.id}>
-                  <Table.RowHeaderCell>{student.id}</Table.RowHeaderCell>
+                  <Table.RowHeaderCell>{key + 1}</Table.RowHeaderCell>
                   <Table.Cell>{`${student.firstname} ${student.lastname}`}</Table.Cell>
                   <Table.Cell>{student.email}</Table.Cell>
                   <Table.Cell>{student.phone}</Table.Cell>
@@ -91,12 +196,28 @@ export default function StudentTable() {
                     {new Date(student.created_at).toDateString()}
                   </Table.Cell>
                   <Table.Cell>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={student.is_disabled}
+                        onChange={(e) => {
+                          updateStudent({
+                            id: student.id,
+                            data: { is_disabled: e.target.checked },
+                          });
+                        }}
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </Table.Cell>
+                  <Table.Cell>
                     {student.credentials_created ? (
                       <button className="bg-primary px-3 py-1 rounded text-white">
                         Already created
                       </button>
                     ) : (
                       <button
+                        type="button"
                         className="bg-primary px-3 py-1 rounded text-white"
                         onClick={() => generateCredentials(student.id)}
                       >
@@ -123,7 +244,7 @@ export default function StudentTable() {
             })
           )}
         </Table.Body>
-      </Table.Root>
+      </Table.Root> */}
     </>
   );
 }

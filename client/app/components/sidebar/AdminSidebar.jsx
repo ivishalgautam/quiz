@@ -4,6 +4,9 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { ImProfile } from "react-icons/im";
 import { CgNotes } from "react-icons/cg";
+import { FiLogOut } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { clearAllCookies } from "@/app/lib/cookies";
 
 const navList = [
   {
@@ -26,14 +29,14 @@ const navList = [
     path: "/admin/students",
     icon: <ImProfile />,
   },
-  {
-    name: "My tests",
-    path: "/my-tests",
-    icon: <ImProfile />,
-  },
 ];
 
 const AdminSidebar = () => {
+  const router = useRouter();
+  function handleLogout() {
+    clearAllCookies();
+    router.push("/auth/login/admin");
+  }
   return (
     <aside className="w-full h-full bg-white shadow text-gray-900 space-y-4 p-4">
       <div>
@@ -55,6 +58,13 @@ const AdminSidebar = () => {
             );
           })}
         </ul>
+        <button
+          className="w-full bg-primary align-middle rounded py-2 text-white mt-6"
+          onClick={handleLogout}
+        >
+          Logout
+          <FiLogOut className="inline ml-2" size={20} />
+        </button>
       </div>
     </aside>
   );

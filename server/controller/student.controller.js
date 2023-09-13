@@ -68,6 +68,18 @@ async function updateStudentById(req, res) {
     if (rowCount === 0)
       return res.status(404).json({ message: "Student not found!" });
 
+    if (rows[0].is_disabled === true) {
+      await pool.query(
+        `UPDATE student_credentials SET is_disabled = $1 WHERE student_id = $2`,
+        [true, rows[0].id]
+      );
+    } else {
+      await pool.query(
+        `UPDATE student_credentials SET is_disabled = $1 WHERE student_id = $2`,
+        [false, rows[0].id]
+      );
+    }
+
     res.json(rows[0]);
   } catch (error) {
     console.log(error);
@@ -118,6 +130,38 @@ async function getStudents(req, res) {
   }
 }
 
+async function updatePassword(req, res) {
+  const { oldPassword, newPassword } = req.body;
+  const studentId = parseInt(req.params.studentId);
+  try {
+    const { rows, rowCount } = await pool.query(
+      `SELECT * FROM students WHERE id = $1`,
+      [studentId]
+    );
+
+    if (rowCount === 0) {
+      res.status(404).json({ message: "Student not exist!" });
+    }
+
+    const credentials = await pool.query(
+      `SELECT * FROM student_credentials WHERE student_id = $1`,
+      [studentId]
+    );
+
+    if (credentials.rows[0].password !== oldPassword) {
+      return res.status(400).json({ message: "Wrong current password!" });
+    }
+
+    await pool.query(`UPDATE student_credentials SET password = $1`, [
+      newPassword,
+    ]);
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
 // ADMIN
 async function generateCredentials(req, res) {
   const studentId = parseInt(req.params.studentId);
@@ -150,8 +194,8 @@ async function generateCredentials(req, res) {
 
     if (credentials.rowCount > 0) {
       await pool.query(
-        `UPDATE students SET credentials_created = $1 WHERE id = $2`,
-        [true, studentId]
+        `UPDATE students SET credentials_created = $1, is_subscribed = $2 WHERE id = $3`,
+        [true, true, studentId]
       );
       sendEmail(email, username, password);
     }
@@ -170,4 +214,5 @@ module.exports = {
   getStudentById,
   getStudents,
   generateCredentials,
+  updatePassword,
 };

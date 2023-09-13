@@ -5,13 +5,18 @@ import React, { useEffect, useState } from "react";
 import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
+import { getCookie } from "@/app/lib/cookies";
 
 export default function TestTable() {
   const [tests, setTests] = useState([]);
 
   useEffect(() => {
     async function getTests() {
-      const resp = await adminRequest.get("/tests");
+      const resp = await adminRequest.get("/tests", {
+        headers: {
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      });
       console.log(resp.data);
       setTests(resp.data);
     }
@@ -41,7 +46,15 @@ export default function TestTable() {
     );
 
     try {
-      const resp = await adminRequest.put(`/tests/${id}`, { ...data });
+      const resp = await adminRequest.put(
+        `/tests/${id}`,
+        { ...data },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
 
       console.log(resp.data);
     } catch (error) {

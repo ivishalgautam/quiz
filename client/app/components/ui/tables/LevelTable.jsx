@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
+import { getCookie } from "@/app/lib/cookies";
 
 export default function LevelTable() {
   const [levels, setlevels] = useState([]);
@@ -21,7 +22,11 @@ export default function LevelTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/levels/${id}`);
+      const resp = await adminRequest.delete(`/levels/${id}`, {
+        headers: {
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      });
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setlevels((prev) => prev.filter((item) => item.id !== id));

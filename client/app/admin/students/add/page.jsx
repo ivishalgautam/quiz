@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
+import { getCookie } from "@/app/lib/cookies";
 
 export default function CreateStudentPage() {
   const [inputVals, setInputVals] = useState({
@@ -38,9 +39,17 @@ export default function CreateStudentPage() {
   async function handleFormSubmit(e) {
     e.preventDefault();
     try {
-      const resp = await publicRequest.post("/admin/students", {
-        ...inputVals,
-      });
+      const resp = await adminRequest.post(
+        "/students",
+        {
+          ...inputVals,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
       if (resp.status === 200) {
         toast.success("Student created successfully.");
         router.push("/admin/students");

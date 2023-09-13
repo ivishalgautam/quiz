@@ -1,4 +1,5 @@
 "use client";
+import { getCookie } from "@/app/lib/cookies";
 import { publicRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
@@ -13,9 +14,17 @@ export default function AddLevelPage() {
       return toast.error("Please enter level!");
     }
     try {
-      const resp = await publicRequest.post("/levels", {
-        name: inputRef.current.value,
-      });
+      const resp = await publicRequest.post(
+        "/levels",
+        {
+          name: inputRef.current.value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
       console.log(resp);
       toast.success(resp.data.message);
     } catch (error) {

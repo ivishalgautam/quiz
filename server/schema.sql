@@ -15,6 +15,16 @@ CREATE TYPE package_type AS ENUM ('golden', 'diamond');
 
 CREATE TYPE subject_type AS ENUM ('abacus', 'vedic');
 
+CREATE TABLE admin(
+    email VARCHAR(40) NOT NULL,
+    password VARCHAR(40) NOT NULL
+);
+
+INSERT INTO
+    admin (email, password)
+VALUES
+    ('vishal@gmail.com', '1234');
+
 CREATE TABLE levels(
     id INT PRIMARY KEY NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -78,7 +88,7 @@ CREATE TABLE student_credentials(
     username VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
     student_id INT REFERENCES students(id) ON DELETE CASCADE NOT NULL,
-    is_disabled BOOLEAN DEFAULT true,
+    is_disabled BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -90,5 +100,6 @@ CREATE TABLE student_results(
     total_points INT NOT NULL,
     student_attempted INT NOT NULL,
     total_questions INT NOT NULL,
+    grade VARCHAR(10) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

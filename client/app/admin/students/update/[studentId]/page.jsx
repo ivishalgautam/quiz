@@ -1,4 +1,5 @@
 "use client";
+import { getCookie } from "@/app/lib/cookies";
 import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -27,7 +28,11 @@ export default function StudentUpdate({ params: { studentId } }) {
   useEffect(() => {
     (async function () {
       try {
-        const resp = await publicRequest.get(`/students/${studentId}`);
+        const resp = await adminRequest.get(`/students/${studentId}`, {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        });
         for (const [key, value] of Object.entries(resp.data)) {
           if (key in inputVals) {
             setInputVals((prev) => ({ ...prev, [key]: value }));
@@ -53,9 +58,17 @@ export default function StudentUpdate({ params: { studentId } }) {
   async function handleUpdate(e) {
     e.preventDefault();
     try {
-      const resp = await publicRequest.put(`/students/${studentId}`, {
-        ...inputVals,
-      });
+      const resp = await adminRequest.put(
+        `/students/${studentId}`,
+        {
+          ...inputVals,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
       if (resp.status === 200) {
         toast.success("Student updated successfully.");
         // router.push("/admin/students");
@@ -75,7 +88,11 @@ export default function StudentUpdate({ params: { studentId } }) {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/students/${id}`);
+      const resp = await adminRequest.delete(`/students/${id}`, {
+        headers: {
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      });
       if (resp.status === 200) {
         toast.success(resp.data.message);
         router.push("/admin/students");

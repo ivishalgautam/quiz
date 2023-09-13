@@ -1,4 +1,5 @@
 "use client";
+import { calculateGrade } from "@/app/lib/calculateGrade";
 import { getCookie } from "@/app/lib/cookies";
 import { publicRequest } from "@/app/lib/requestMethods";
 import { formatTime } from "@/app/lib/time";
@@ -38,14 +39,6 @@ const Page = ({ params: { testId } }) => {
     }
 
     try {
-      console.log({
-        student_id: getCookie("student_id"),
-        test_id: testId,
-        student_points: TP,
-        total_points: points.totalPoints,
-        student_attempted: attempted,
-        total_questions: questions.length,
-      });
       const resp = await publicRequest.post(`/results`, {
         student_id: getCookie("student_id"),
         test_id: testId,
@@ -53,6 +46,7 @@ const Page = ({ params: { testId } }) => {
         total_points: points.totalPoints,
         student_attempted: attempted,
         total_questions: questions.length,
+        grade: calculateGrade(TP, points.totalPoints, questions.length),
       });
       if (resp.status === 200) {
         router.push(`/student/result/${getCookie("student_id")}`);
@@ -101,8 +95,6 @@ const Page = ({ params: { testId } }) => {
     })();
   }, []);
 
-  console.log("duration", duration);
-
   useEffect(() => {
     let interval;
     if (isRunning) {
@@ -133,7 +125,7 @@ const Page = ({ params: { testId } }) => {
 
   return (
     <section>
-      <p className="text-xl font-bold mb-8 text-end">{`Time: ${formatTime(
+      <p className="text-xl font-bold mb-8 text-end">{`Time left: ${formatTime(
         duration
       )}`}</p>
       <div className="grid grid-cols-6 gap-4">

@@ -8,7 +8,7 @@ export default function StudentLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
     if (!getCookie("student_id")) {
-      return router.push("/auth/login");
+      return router.push("/auth/login/student");
     }
   }, []);
 
