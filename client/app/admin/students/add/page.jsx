@@ -7,8 +7,7 @@ import { getCookie } from "@/app/lib/cookies";
 
 export default function CreateStudentPage() {
   const [inputVals, setInputVals] = useState({
-    firstname: "",
-    lastname: "",
+    fullname: "",
     email: "",
     phone: "",
     father_name: "",
@@ -133,35 +132,19 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
-          {/* firstname */}
+          {/* fullname */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
-              id="firstname"
-              name="firstname"
+              id="fullname"
+              name="fullname"
               className="my-input peer"
               placeholder=""
               autoComplete="off"
               onChange={handleOnChange}
             />
-            <label htmlFor="firstname" className="my-label">
-              Firstname
-            </label>
-          </div>
-
-          {/* lastname */}
-          <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
-              className="my-input peer"
-              placeholder=""
-              autoComplete="off"
-              onChange={handleOnChange}
-            />
-            <label htmlFor="lastname" className="my-label">
-              Lastname
+            <label htmlFor="fullname" className="my-label">
+              Fullname
             </label>
           </div>
 

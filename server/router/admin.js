@@ -1,26 +1,19 @@
-const {
-  createQuestion,
-  getQuestions,
-  updateQuestionById,
-  deleteQuestionById,
-} = require("../controller/question.controller");
-const {
-  deleteStudentById,
-  getStudents,
-  createStudent,
-  generateCredentials,
-  getStudentById,
-  updateStudentById,
-} = require("../controller/student.controller");
-const {
-  getAdminTests,
-  createTest,
-  getTestById,
-  updateTestById,
-  deleteTestById,
-} = require("../controller/test.controller");
-const { verifyTokenAndAuthorization } = require("../middleware/verifyToken");
 const router = require("express").Router();
+const { verifyTokenAndAuthorization } = require("../middleware/verifyToken");
+
+const Question = require("../controller/question.controller");
+const Student = require("../controller/student.controller");
+const Test = require("../controller/test.controller");
+const Leads = require("../controller/leads.controller");
+
+// leads
+router.delete(
+  "/leads/:leadId",
+  verifyTokenAndAuthorization,
+  Leads.deleteLeadById
+);
+router.get("/leads/:leadId", verifyTokenAndAuthorization, Leads.getLeadById);
+router.get("/leads", verifyTokenAndAuthorization, Leads.getAllLeads);
 
 // credentials
 router.post(
@@ -30,13 +23,17 @@ router.post(
 );
 
 // students
-router.post("/students", verifyTokenAndAuthorization, createStudent);
-router.get("/students", verifyTokenAndAuthorization, getStudents);
-router.get("/students/:studentId", verifyTokenAndAuthorization, getStudentById);
+router.post("/students", verifyTokenAndAuthorization, Student.createStudent);
+router.get("/students", verifyTokenAndAuthorization, Student.getStudents);
+router.get(
+  "/students/:studentId",
+  verifyTokenAndAuthorization,
+  Student.getStudentById
+);
 router.put(
   "/students/:studentId",
   verifyTokenAndAuthorization,
-  updateStudentById
+  Student.updateStudentById
 );
 router.delete(
   "/students/:studentId",
@@ -45,24 +42,28 @@ router.delete(
 );
 
 // tests
-router.get("/tests", verifyTokenAndAuthorization, getAdminTests);
-router.post("/tests", verifyTokenAndAuthorization, createTest);
-router.get("/tests/:testId", verifyTokenAndAuthorization, getTestById);
-router.put("/tests/:testId", verifyTokenAndAuthorization, updateTestById);
+router.get("/tests", verifyTokenAndAuthorization, Test.getAdminTests);
+router.post("/tests", verifyTokenAndAuthorization, Test.createTest);
+router.get("/tests/:testId", verifyTokenAndAuthorization, Test.getTestById);
+router.put("/tests/:testId", verifyTokenAndAuthorization, Test.updateTestById);
 router.delete("/tests/:testId", deleteTestById);
 
 // questions
-router.post("/questions/", verifyTokenAndAuthorization, createQuestion);
-router.get("/questions/", verifyTokenAndAuthorization, getQuestions);
+router.post(
+  "/questions/",
+  verifyTokenAndAuthorization,
+  Question.createQuestion
+);
+router.get("/questions/", verifyTokenAndAuthorization, Question.getQuestions);
 router.put(
   "/questions/:questionId",
   verifyTokenAndAuthorization,
-  updateQuestionById
+  Question.updateQuestionById
 );
 router.delete(
   "/questions/:questionId",
   verifyTokenAndAuthorization,
-  deleteQuestionById
+  Question.deleteQuestionById
 );
 
 // student results

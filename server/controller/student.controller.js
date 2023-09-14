@@ -7,8 +7,7 @@ const { sendEmail } = require("../helper/mailer");
 
 async function createStudent(req, res) {
   const {
-    firstname,
-    lastname,
+    fullname,
     email,
     phone,
     father_name,
@@ -23,7 +22,7 @@ async function createStudent(req, res) {
   } = req.body;
   try {
     const { rows, rowCount } = await pool.query(
-      `INSERT INTO students (firstname, lastname, email, phone, father_name, mother_name, dob, city, state, address, subject, package, level_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *`,
+      `INSERT INTO students (fullname, email, phone, father_name, mother_name, dob, city, state, address, subject, package, level_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *`,
       [
         firstname,
         lastname,

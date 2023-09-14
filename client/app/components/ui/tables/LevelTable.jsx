@@ -6,6 +6,7 @@ import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 import { getCookie } from "@/app/lib/cookies";
+import DataTable from "react-data-table-component";
 
 export default function LevelTable() {
   const [levels, setlevels] = useState([]);
@@ -34,6 +35,33 @@ export default function LevelTable() {
     }
   };
 
+  const columns = [
+    {
+      name: "Id",
+      selector: (row) => row.id,
+    },
+    {
+      name: "Level",
+      selector: (row) => row.name,
+    },
+    {
+      name: "Created At",
+      selector: (row) => new Date(row.created_at).toDateString(),
+    },
+    {
+      name: "Actions",
+      selector: (row) => (
+        <button>
+          <AiOutlineDelete
+            size={20}
+            className="text-rose-500"
+            onClick={() => handleDelete(row.id)}
+          />
+        </button>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="mb-4 flex justify-end">
@@ -44,47 +72,7 @@ export default function LevelTable() {
           Add level
         </Link>
       </div>
-      <Table.Root>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Level</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Created At</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Action</Table.ColumnHeaderCell>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          {levels?.length <= 0 ? (
-            <Table.Row>
-              <Table.Cell>No data found!</Table.Cell>
-              <Table.Cell></Table.Cell>
-              <Table.Cell></Table.Cell>
-            </Table.Row>
-          ) : (
-            levels?.map((level) => {
-              return (
-                <Table.Row key={level.id}>
-                  <Table.RowHeaderCell>{level.id}</Table.RowHeaderCell>
-                  <Table.Cell>{level.name}</Table.Cell>
-                  <Table.Cell>
-                    {new Date(level.created_at).toDateString()}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <button>
-                      <AiOutlineDelete
-                        size={20}
-                        className="text-rose-500"
-                        onClick={() => handleDelete(level.id)}
-                      />
-                    </button>
-                  </Table.Cell>
-                </Table.Row>
-              );
-            })
-          )}
-        </Table.Body>
-      </Table.Root>
+      <DataTable columns={columns} data={levels} pagination />
     </>
   );
 }

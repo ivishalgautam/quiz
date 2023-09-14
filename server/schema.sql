@@ -59,8 +59,7 @@ CREATE TABLE questions(
 
 CREATE TABLE students(
     id SERIAL PRIMARY KEY,
-    firstname VARCHAR(100) NOT NULL,
-    lastname VARCHAR(100) NOT NULL,
+    fullname VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL,
     father_name VARCHAR(100),
@@ -102,4 +101,12 @@ CREATE TABLE student_results(
     total_questions INT NOT NULL,
     grade VARCHAR(10) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE leads(
+    id SERIAL NOT NULL PRIMARY KEY,
+    fullname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    gaurdian_name VARCHAR(100) NOT NULL
 )
