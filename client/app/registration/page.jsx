@@ -21,7 +21,7 @@ export default function Registration() {
       });
       if (resp.status === 200) {
         toast.success(resp.data.message);
-        // router.push("/admin/students");
+        router.push("/registration/thank-you");
       }
       console.log(resp.data);
     } catch (error) {

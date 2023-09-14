@@ -19,7 +19,7 @@ router.get("/leads", verifyTokenAndAuthorization, Leads.getAllLeads);
 router.post(
   "/credentials/:studentId",
   verifyTokenAndAuthorization,
-  generateCredentials
+  Student.generateCredentials
 );
 
 // students
@@ -38,7 +38,7 @@ router.put(
 router.delete(
   "/students/:studentId",
   verifyTokenAndAuthorization,
-  deleteStudentById
+  Student.deleteStudentById
 );
 
 // tests
@@ -46,7 +46,7 @@ router.get("/tests", verifyTokenAndAuthorization, Test.getAdminTests);
 router.post("/tests", verifyTokenAndAuthorization, Test.createTest);
 router.get("/tests/:testId", verifyTokenAndAuthorization, Test.getTestById);
 router.put("/tests/:testId", verifyTokenAndAuthorization, Test.updateTestById);
-router.delete("/tests/:testId", deleteTestById);
+router.delete("/tests/:testId", Test.deleteTestById);
 
 // questions
 router.post(
