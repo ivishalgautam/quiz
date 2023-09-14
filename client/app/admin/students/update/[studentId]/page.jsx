@@ -8,8 +8,7 @@ import { AiFillDelete } from "react-icons/ai";
 
 export default function StudentUpdate({ params: { studentId } }) {
   const [inputVals, setInputVals] = useState({
-    firstname: "",
-    lastname: "",
+    fullname: "",
     email: "",
     phone: "",
     father_name: "",
@@ -45,7 +44,9 @@ export default function StudentUpdate({ params: { studentId } }) {
 
     (async function () {
       try {
-        const resp = await publicRequest.get("/admin/levels");
+        const resp = await adminRequest.get("/levels", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
         setLevels(resp.data);
       } catch (error) {
         console.log(error);
@@ -178,37 +179,20 @@ export default function StudentUpdate({ params: { studentId } }) {
             </label>
           </div>
 
-          {/* firstname */}
+          {/* fullname */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
-              id="firstname"
-              name="firstname"
-              className="my-input peer"
-              placeholder="firstname"
-              autoComplete="off"
-              value={inputVals.firstname}
-              onChange={handleOnChange}
-            />
-            <label htmlFor="firstname" className="my-label">
-              Firstname
-            </label>
-          </div>
-
-          {/* lastname */}
-          <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
+              id="fullname"
+              name="fullname"
               className="my-input peer"
               placeholder=""
               autoComplete="off"
-              value={inputVals.lastname}
+              value={inputVals.fullname}
               onChange={handleOnChange}
             />
-            <label htmlFor="lastname" className="my-label">
-              Lastname
+            <label htmlFor="fullaname" className="my-label">
+              Fullname
             </label>
           </div>
 

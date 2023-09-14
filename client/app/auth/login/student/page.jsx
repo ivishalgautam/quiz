@@ -27,7 +27,7 @@ export default function LoginPage() {
       if (status === 200) {
         toast.success("Logged in successfully");
         setCookie("email", data.email, 2);
-        setCookie("fullname", `${data.firstname} ${data.lastname}`, 2);
+        setCookie("fullname", data.fullname, 2);
         setCookie("student_id", data.id, 2);
         setCookie("package", data.package, 2);
         setCookie("level_id", data.level_id, 2);

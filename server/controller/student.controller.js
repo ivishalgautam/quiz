@@ -24,8 +24,7 @@ async function createStudent(req, res) {
     const { rows, rowCount } = await pool.query(
       `INSERT INTO students (fullname, email, phone, father_name, mother_name, dob, city, state, address, subject, package, level_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *`,
       [
-        firstname,
-        lastname,
+        fullname,
         email,
         phone,
         father_name,
@@ -151,6 +150,12 @@ async function updatePassword(req, res) {
       return res.status(400).json({ message: "Wrong current password!" });
     }
 
+    if (credentials.rows[0].password === newPassword) {
+      return res
+        .status(403)
+        .json({ message: "You already have this password" });
+    }
+
     await pool.query(`UPDATE student_credentials SET password = $1`, [
       newPassword,
     ]);
@@ -174,8 +179,8 @@ async function generateCredentials(req, res) {
     if (studentExist.rowCount === 0)
       return res.status(404).json({ message: "Student not exist!" });
 
-    const { firstname, lastname, id, dob, email } = studentExist.rows[0];
-    const username = await generateUsername(firstname, lastname, id);
+    const { fullname, id, dob, email } = studentExist.rows[0];
+    const username = await generateUsername(fullname, id);
     const password = await generatePassword(dob);
 
     const credentialsExist = await pool.query(

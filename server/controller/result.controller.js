@@ -38,8 +38,7 @@ async function getResults(req, res) {
       SELECT 
             sr.*, 
             s.id as student_id, 
-            s.firstname, 
-            s.lastname, 
+            s.fullname, 
             t.id as test_id, 
             t.name as test_name
         FROM 
@@ -47,7 +46,7 @@ async function getResults(req, res) {
         JOIN 
             students s ON sr.student_id = s.id
         JOIN 
-            test t on sr.test_id = t.id`);
+            tests t on sr.test_id = t.id`);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -62,8 +61,7 @@ async function getStudentResults(req, res) {
       SELECT 
             sr.*, 
             s.id as student_id, 
-            s.firstname, 
-            s.lastname, 
+            s.fullname, 
             t.id as test_id, 
             t.name as test_name
         FROM 

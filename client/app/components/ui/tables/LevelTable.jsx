@@ -51,10 +51,10 @@ export default function LevelTable() {
     {
       name: "Actions",
       selector: (row) => (
-        <button>
+        <button className="bg-rose-500 group p-1 rounded hover:bg-white transition-all border hover:border-rose-500">
           <AiOutlineDelete
             size={20}
-            className="text-rose-500"
+            className="text-white group-hover:text-rose-500"
             onClick={() => handleDelete(row.id)}
           />
         </button>

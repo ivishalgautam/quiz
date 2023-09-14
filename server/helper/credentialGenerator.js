@@ -1,5 +1,5 @@
-async function generateUsername(firstname, lastname, id) {
-  return `nla${firstname.toLowerCase()}${lastname.toLowerCase()}${id}`;
+async function generateUsername(fullname, id) {
+  return `nla${fullname.toLowerCase().split(" ").join("")}${id}`;
 }
 
 async function generatePassword(dob) {

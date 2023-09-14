@@ -29,6 +29,11 @@ const navList = [
     path: "/admin/students",
     icon: <ImProfile />,
   },
+  {
+    name: "Results",
+    path: "/admin/results",
+    icon: <ImProfile />,
+  },
 ];
 
 const AdminSidebar = () => {

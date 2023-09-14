@@ -76,37 +76,46 @@ export default function TestTable() {
     {
       name: "Id",
       selector: (row) => row.id,
+      width: "3rem",
     },
     {
       name: "Name",
       selector: (row) => row.name,
+      width: "7rem",
     },
     {
       name: "Questions",
       selector: (row) => row.total_questions ?? 0,
+      width: "5.6rem",
     },
     {
       name: "Level",
       selector: (row) => row.level,
+      width: "4rem",
     },
     {
       name: "Type",
       selector: (row) => row.test_type,
+      width: "7rem",
     },
     {
       name: "Subject",
       selector: (row) => row.subject,
+      width: "5rem",
     },
     {
       name: "Start time",
       selector: (row) => new Date(row.start_time).toLocaleString(),
+      width: "11rem",
     },
     {
       name: "Created At",
       selector: (row) => new Date(row.created_at).toDateString(),
+      width: "8rem",
     },
     {
       name: "Published",
+
       selector: (row) => (
         <label className="switch">
           <input
@@ -122,6 +131,7 @@ export default function TestTable() {
           <span className="slider"></span>
         </label>
       ),
+      width: "6rem",
     },
     {
       name: "Actions",
@@ -129,19 +139,20 @@ export default function TestTable() {
         <div className="flex items-center justify-center gap-2">
           <Link
             href={`/admin/questions/add/${row.id}`}
-            className="bg-primary rounded px-2 text-white"
+            className="bg-primary rounded px-2 py-1 text-white"
           >
             Add questions
           </Link>
-          <button>
+          <button className="bg-rose-500 group p-1 rounded hover:bg-white transition-all border hover:border-rose-500">
             <AiOutlineDelete
               size={20}
-              className="text-rose-500"
+              className="text-white group-hover:text-rose-500"
               onClick={() => handleDelete(row.id)}
             />
           </button>
         </div>
       ),
+      width: "20%",
     },
   ];
 
@@ -161,6 +172,7 @@ export default function TestTable() {
       },
     },
   };
+
   function handleSearch(value) {
     const inputValue = value.toLowerCase();
 

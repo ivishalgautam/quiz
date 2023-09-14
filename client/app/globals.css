@@ -135,4 +135,8 @@
   .dashboard-mini-card > p {
     @apply text-3xl font-bold;
   }
+
+  /* .iWyFZZ div:first-child {
+    white-space: wrap !important;
+  } */
 }

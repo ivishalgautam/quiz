@@ -26,7 +26,9 @@ export default function AddTestPage() {
   useEffect(() => {
     (async function () {
       try {
-        const resp = await publicRequest.get("/levels");
+        const resp = await adminRequest.get("/levels", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
         setLevels(resp.data);
       } catch (error) {
         console.log(error);
@@ -78,8 +80,6 @@ export default function AddTestPage() {
     setInstructions((prev) => [...prev, inputs.instruction]);
     setInputs((prev) => ({ ...prev, instruction: "" }));
   }
-
-  console.log(inputs);
 
   return (
     <section>

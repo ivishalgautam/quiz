@@ -11,7 +11,6 @@ app.use(cors());
 
 // admin
 app.use("/api/admin", require("./router/admin"));
-app.use("/api/admin/levels", require("./router/level"));
 
 // user
 app.use("/api/students", require("./router/student"));

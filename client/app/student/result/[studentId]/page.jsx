@@ -57,7 +57,9 @@ export default function ResultPage({ params: { studentId } }) {
           loading ? (
             <button>Loading Document...</button>
           ) : (
-            <button>Download</button>
+            <button className="w-full py-3 bg-primary rounded text-white">
+              Download Certificate
+            </button>
           )
         }
       </PDFDownloadLink>

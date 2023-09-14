@@ -116,12 +116,14 @@ export default function StudentTable() {
   const columns = [
     {
       name: "Id",
-      selector: (row) => row.id,
+      selector: (row, key) => key + 1,
+      width: "3rem",
     },
     {
       name: "Name",
       selector: (row) => row.fullname,
       sortable: true,
+      width: "10%",
     },
     {
       name: "Email",
@@ -157,6 +159,7 @@ export default function StudentTable() {
           <span className="slider"></span>
         </label>
       ),
+      width: "8%",
     },
     {
       name: "Credentials",
@@ -175,18 +178,25 @@ export default function StudentTable() {
           </button>
         );
       },
+      width: "15%",
     },
     {
       name: "Actions",
       selector: (row) => (
         <div className="flex items-center justify-center gap-1">
-          <Link href={`/admin/students/update/${row.id}`}>
-            <BsPencilSquare size={20} />
+          <Link
+            href={`/admin/students/update/${row.id}`}
+            className="bg-primary group p-1 rounded hover:bg-white transition-all border hover:border-primary"
+          >
+            <BsPencilSquare
+              size={20}
+              className="text-white group-hover:text-primary"
+            />
           </Link>
-          <button>
+          <button className="bg-rose-500 group p-1 rounded hover:bg-white transition-all border hover:border-rose-500">
             <AiOutlineDelete
               size={20}
-              className="text-rose-500"
+              className="text-white group-hover:text-rose-500"
               onClick={() => handleDelete(row.id)}
             />
           </button>

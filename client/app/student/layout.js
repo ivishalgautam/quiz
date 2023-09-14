@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
 import StudentSidebar from "../components/sidebar/StudentSidebar";
-import { getCookie } from "../lib/cookies";
+import { clearAllCookies, getCookie } from "../lib/cookies";
 import { useRouter } from "next/navigation";
 
 export default function StudentLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
     if (!getCookie("student_id")) {
+      clearAllCookies();
       return router.push("/auth/login/student");
     }
   }, []);

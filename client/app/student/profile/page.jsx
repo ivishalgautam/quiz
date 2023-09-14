@@ -93,7 +93,7 @@ export default function ProfilePage() {
                       <input
                         type="text"
                         id="oldPassword"
-                        className="my-input"
+                        className="my-input peer"
                         placeholder="Old password"
                         onChange={(e) =>
                           setPassword((prev) => ({
@@ -117,7 +117,7 @@ export default function ProfilePage() {
                             newPassword: e.target.value,
                           }))
                         }
-                        className="my-input"
+                        className="my-input peer"
                       />
                       <label htmlFor="newPassword" className="my-label">
                         New password
@@ -145,7 +145,9 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 gap-4 grid-rows-7 h-full">
           <div className="col-span-2 bg-white row-span-3 shadow-md rounded-md flex items-center justify-center">
             <div className="flex flex-col items-center justify-center gap-2">
-              <h5 className="text-2xl text-primary font-bold capitalize">{`${details?.firstname} ${details?.lastname}`}</h5>
+              <h5 className="text-2xl text-primary font-bold capitalize">
+                {details?.fullname}
+              </h5>
               <p className="text-sm">{details?.email}</p>
               <button
                 className="text-white bg-primary rounded p-1 px-3 mt-3"
@@ -161,12 +163,8 @@ export default function ProfilePage() {
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h4 className="font-bold text-primary">Firstname</h4>
-                <p className="text-sm capitalize">{details?.firstname}</p>
-              </div>
-              <div>
-                <h4 className="font-bold text-primary">Lastname</h4>
-                <p className="text-sm capitalize">{details?.lastname}</p>
+                <h4 className="font-bold text-primary">Fullname</h4>
+                <p className="text-sm capitalize">{details?.fullname}</p>
               </div>
               <div>
                 <h4 className="font-bold text-primary">Email</h4>

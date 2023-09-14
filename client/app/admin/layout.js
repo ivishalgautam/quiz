@@ -2,12 +2,13 @@
 import React, { useEffect } from "react";
 import AdminSidebar from "../components/sidebar/AdminSidebar";
 import { useRouter } from "next/navigation";
-import { getCookie } from "../lib/cookies";
+import { clearAllCookies, getCookie } from "../lib/cookies";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
     if (!getCookie("token")) {
+      clearAllCookies();
       return router.push("/auth/login/admin");
     }
   }, []);

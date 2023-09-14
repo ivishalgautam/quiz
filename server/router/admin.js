@@ -5,6 +5,8 @@ const Question = require("../controller/question.controller");
 const Student = require("../controller/student.controller");
 const Test = require("../controller/test.controller");
 const Leads = require("../controller/leads.controller");
+const Levels = require("../controller/level.controller");
+const Result = require("../controller/result.controller");
 
 // leads
 router.delete(
@@ -66,8 +68,15 @@ router.delete(
   Question.deleteQuestionById
 );
 
+// levels
+router.post("/levels", Levels.createLevel);
+router.get("/levels", Levels.getLevels);
+router.get("/levels/:levelId", Levels.getLevelById);
+router.delete("/levels/:levelId", Levels.deleteLevelById);
+router.put("/levels/:levelId", Levels.updateLevelById);
+
 // student results
-// router.get("/results");
-// router.get("/results/:studentId");
+router.get("/results", Result.getResults);
+router.get("/results/:studentId", Result.getStudentResults);
 
 module.exports = router;

@@ -1,8 +1,10 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { AiOutlineDelete } from "react-icons/ai";
 import { GrAddCircle } from "react-icons/gr";
+import CerticateTemplate from "../../certificate_template.png";
+import { imageToBase64 } from "@/app/lib/convertToBase64";
 
 const Question = ({ questionStates, setQuestionStates }) => {
   const handleQuestionInputChange = (e, index) => {
@@ -55,6 +57,12 @@ const Question = ({ questionStates, setQuestionStates }) => {
   const handleDeleteQuestion = (index) => {
     setQuestionStates((prev) => prev.filter((item, ind) => ind !== index));
   };
+
+  useEffect(() => {
+    imageToBase64(CerticateTemplate, function (base64) {
+      console.log(base64);
+    });
+  }, []);
   return (
     <>
       <div className="grid grid-cols-6 gap-4">
