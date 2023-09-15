@@ -108,7 +108,7 @@ async function getStudentTestsByCategory(req, res) {
       return res.status(404).json({ message: "Student not exist!" });
 
     const package = student.rows[0].package;
-    console.log(package);
+    const level = student.rows[0].level_id;
 
     const allTests = await pool.query(
       `SELECT t.*, q.total_questions
@@ -123,18 +123,18 @@ async function getStudentTestsByCategory(req, res) {
     );
 
     let tests;
-    let filteredTests;
 
     if (package === "golden") {
-      filteredTests = allTests.rows.filter(
-        (item) => item.test_type === "practice"
-      );
-      tests = filteredTests;
+      let practiceTests = allTests.rows
+        .filter((item) => item.test_type === "practice")
+        .filter((item) => item.level <= level);
+      tests = practiceTests;
     }
 
     if (package === "diamond") {
-      tests = allTests.rows;
+      tests = allTests.rows.filter((item) => item.level <= level);
     }
+
     res.json(tests);
   } catch (error) {
     console.log(error);

@@ -128,44 +128,6 @@ async function getStudents(req, res) {
   }
 }
 
-async function updatePassword(req, res) {
-  const { oldPassword, newPassword } = req.body;
-  const studentId = parseInt(req.params.studentId);
-  try {
-    const { rows, rowCount } = await pool.query(
-      `SELECT * FROM students WHERE id = $1`,
-      [studentId]
-    );
-
-    if (rowCount === 0) {
-      res.status(404).json({ message: "Student not exist!" });
-    }
-
-    const credentials = await pool.query(
-      `SELECT * FROM student_credentials WHERE student_id = $1`,
-      [studentId]
-    );
-
-    if (credentials.rows[0].password !== oldPassword) {
-      return res.status(400).json({ message: "Wrong current password!" });
-    }
-
-    if (credentials.rows[0].password === newPassword) {
-      return res
-        .status(403)
-        .json({ message: "You already have this password" });
-    }
-
-    await pool.query(`UPDATE student_credentials SET password = $1`, [
-      newPassword,
-    ]);
-    res.json({ message: "Password updated successfully" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-}
-
 // ADMIN
 async function generateCredentials(req, res) {
   const studentId = parseInt(req.params.studentId);
@@ -218,5 +180,4 @@ module.exports = {
   getStudentById,
   getStudents,
   generateCredentials,
-  updatePassword,
 };

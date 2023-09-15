@@ -1,5 +1,4 @@
 "use client";
-import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
@@ -12,7 +11,9 @@ export default function LevelTable() {
   const [levels, setlevels] = useState([]);
   useEffect(() => {
     async function getLevels() {
-      const resp = await adminRequest.get("/levels");
+      const resp = await adminRequest.get("/levels", {
+        headers: { Authorization: `Bearer ${getCookie("token")}` },
+      });
       console.log(resp.data);
       setlevels(resp.data);
     }
@@ -72,7 +73,9 @@ export default function LevelTable() {
           Add level
         </Link>
       </div>
-      <DataTable columns={columns} data={levels} pagination />
+      <div className="rounded-lg overflow-hidden">
+        <DataTable columns={columns} data={levels} pagination />
+      </div>
     </>
   );
 }

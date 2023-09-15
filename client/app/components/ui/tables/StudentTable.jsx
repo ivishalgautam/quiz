@@ -116,8 +116,9 @@ export default function StudentTable() {
   const columns = [
     {
       name: "Id",
-      selector: (row, key) => key + 1,
-      width: "3rem",
+      selector: (row) => row.id,
+      width: "5rem",
+      sortable: true,
     },
     {
       name: "Name",
@@ -227,7 +228,9 @@ export default function StudentTable() {
           </Link>
         </div>
       </div>
-      <DataTable columns={columns} data={students} pagination />
+      <div className="rounded-lg overflow-hidden">
+        <DataTable columns={columns} data={students} pagination />
+      </div>
     </>
   );
 }

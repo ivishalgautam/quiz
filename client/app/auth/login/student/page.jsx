@@ -1,6 +1,7 @@
 "use client";
 import { getCookie, setCookie } from "@/app/lib/cookies";
 import { authRequest } from "@/app/lib/requestMethods";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -79,7 +80,15 @@ export default function LoginPage() {
             </label>
           </div>
 
-          <button className="w-full py-3 rounded-md bg-primary">Login</button>
+          <button className="w-full py-3 rounded-md bg-primary text-white">
+            Login
+          </button>
+          <p className="text-sm text-center">
+            Reset your{" "}
+            <Link className="text-rose-500" href="/reset-password/email">
+              password
+            </Link>
+          </p>
         </div>
       </form>
     </section>

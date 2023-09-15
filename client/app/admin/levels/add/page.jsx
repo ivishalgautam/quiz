@@ -1,6 +1,6 @@
 "use client";
 import { getCookie } from "@/app/lib/cookies";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 import { toast } from "react-hot-toast";
@@ -8,13 +8,14 @@ import { toast } from "react-hot-toast";
 export default function AddLevelPage() {
   const inputRef = useRef();
   const router = useRouter();
+
   async function handleFormSubmit(e) {
     e.preventDefault();
     if (inputRef.current.value === "") {
       return toast.error("Please enter level!");
     }
     try {
-      const resp = await publicRequest.post(
+      const resp = await adminRequest.post(
         "/levels",
         {
           name: inputRef.current.value,
@@ -25,13 +26,17 @@ export default function AddLevelPage() {
           },
         }
       );
-      console.log(resp);
-      toast.success(resp.data.message);
+      console.log(resp.data);
+      if (resp.status === 200) {
+        toast.success(resp.data.message);
+        router.push("/admin/dashboard");
+      }
     } catch (error) {
       toast.error(error.response.data.message);
       console.log(error);
     }
   }
+
   return (
     <section>
       <h2 className="section-heading">Add Level</h2>

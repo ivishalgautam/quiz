@@ -1,13 +1,15 @@
 import React from "react";
-import { Page, Text, Image, Document, StyleSheet } from "@react-pdf/renderer";
-import CerticateTemplate from "../../certificate_template.png";
+import {
+  Page,
+  Text,
+  Image,
+  Document,
+  StyleSheet,
+  View,
+} from "@react-pdf/renderer";
+import CertificateTemplate from "../../../public/certificate_template.png";
 
 const styles = StyleSheet.create({
-  body: {
-    paddingTop: 35,
-    paddingBottom: 65,
-    paddingHorizontal: 35,
-  },
   title: {
     fontSize: 24,
     textAlign: "center",
@@ -19,25 +21,13 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   image: {
-    marginVertical: 15,
-    marginHorizontal: 100,
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 9999,
+    marginVertical: 0,
+    marginHorizontal: 0,
   },
+
   header: {
     fontSize: 12,
     marginBottom: 20,
-    textAlign: "center",
-    color: "grey",
-  },
-  pageNumber: {
-    position: "absolute",
-    fontSize: 12,
-    bottom: 30,
-    left: 0,
-    right: 0,
     textAlign: "center",
     color: "grey",
   },
@@ -46,10 +36,39 @@ const styles = StyleSheet.create({
 const Pdf = ({ result }) => {
   return (
     <Document>
-      <Page size="A4" orientation="landscape" style={{ ...styles.body }}>
-        <Text style={styles.header} fixed></Text>
-        <Text style={styles.text}>{`Name: ${result?.fullname}`}</Text>
-        <Text style={styles.text}>{`Test name: ${result?.test_name}`}</Text>
+      <Page
+        size="A4"
+        orientation="landscape"
+        style={{
+          padding: 0,
+          margin: 0,
+          position: "relative",
+        }}
+      >
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            style={{ width: "100%", height: "100%" }}
+            {...CertificateTemplate}
+          />
+          <Text
+            style={{
+              position: "absolute",
+              top: "43%",
+              left: "50%",
+              transform: "translateX(-70%)",
+            }}
+          >
+            {result?.fullname}
+          </Text>
+        </View>
+
+        {/* <Text style={styles.text}>{`Test name: ${result?.test_name}`}</Text>
         <Text
           style={styles.text}
         >{`Total questions: ${result?.total_questions}`}</Text>
@@ -61,13 +80,7 @@ const Pdf = ({ result }) => {
         >{`Total points: ${result?.total_points}`}</Text>
         <Text
           style={styles.text}
-        >{`Your points: ${result?.student_points}`}</Text>
-        <Image
-          style={styles.image}
-          src={CerticateTemplate}
-          width={200}
-          height={150}
-        />
+        >{`Your points: ${result?.student_points}`}</Text> */}
       </Page>
     </Document>
   );

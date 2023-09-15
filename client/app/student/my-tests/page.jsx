@@ -22,9 +22,11 @@ const page = () => {
 
   return (
     <>
-      <section className="grid grid-cols-2">
+      <section className="grid grid-cols-2 gap-y-8">
         {tests.length <= 0 ? (
-          <div>You don't have any test</div>
+          <div className="col-span-2 flex items-center justify-center text-3xl font-bold text-primary">
+            You don't have any test
+          </div>
         ) : (
           tests?.map((test) => {
             return (

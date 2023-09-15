@@ -208,12 +208,14 @@ export default function TestTable() {
           </Link>
         </div>
       </div>
-      <DataTable
-        columns={columns}
-        data={tests}
-        pagination
-        customStyles={customStyles}
-      />
+      <div className="rounded-lg overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={tests}
+          pagination
+          customStyles={customStyles}
+        />
+      </div>
     </>
   );
 }

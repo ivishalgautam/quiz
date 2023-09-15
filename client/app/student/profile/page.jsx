@@ -149,12 +149,12 @@ export default function ProfilePage() {
                 {details?.fullname}
               </h5>
               <p className="text-sm">{details?.email}</p>
-              <button
+              {/* <button
                 className="text-white bg-primary rounded p-1 px-3 mt-3"
                 onClick={() => setIsOpen(true)}
               >
                 Change password
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="col-span-1 bg-white shadow-md rounded-md p-8">

@@ -25,7 +25,9 @@ export default function CreateStudentPage() {
   useEffect(() => {
     (async function () {
       try {
-        const resp = await publicRequest.get("/admin/levels");
+        const resp = await publicRequest.get("/admin/levels", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
         setLevels(resp.data);
       } catch (error) {
         console.log(error);
@@ -51,7 +53,7 @@ export default function CreateStudentPage() {
       );
       if (resp.status === 200) {
         toast.success("Student created successfully.");
-        router.push("/admin/students");
+        router.push("/admin/dashboard");
       }
       console.log(resp.data);
     } catch (error) {

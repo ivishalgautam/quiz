@@ -3,8 +3,6 @@ import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { AiOutlineDelete } from "react-icons/ai";
 import { GrAddCircle } from "react-icons/gr";
-import CerticateTemplate from "../../certificate_template.png";
-import { imageToBase64 } from "@/app/lib/convertToBase64";
 
 const Question = ({ questionStates, setQuestionStates }) => {
   const handleQuestionInputChange = (e, index) => {
@@ -58,66 +56,59 @@ const Question = ({ questionStates, setQuestionStates }) => {
     setQuestionStates((prev) => prev.filter((item, ind) => ind !== index));
   };
 
-  useEffect(() => {
-    imageToBase64(CerticateTemplate, function (base64) {
-      console.log(base64);
-    });
-  }, []);
   return (
-    <>
-      <div className="grid grid-cols-6 gap-4">
-        {questionStates.map((questionState, index) => (
-          <div key={index} className="question-box">
-            <div className="flex justify-between items-center">
-              <p className="">{`Question No. - ${index + 1}`}</p>
-              <button
-                type="button"
-                className="bg-rose-500 p-2 rounded"
-                onClick={() => handleDeleteQuestion(index)}
-              >
-                <AiOutlineDelete className="text-white" />
-              </button>
-            </div>
-            {Object.keys(questionState.values).map((key) => (
-              <div className="inputGroup" key={key}>
-                <input
-                  name={key}
-                  value={questionState.values[key]}
-                  onChange={(e) => handleQuestionInputChange(e, index)}
-                  type="text"
-                  required=""
-                  autocomplete="off"
-                />
-                <label htmlFor={key}>Value</label>
-              </div>
-            ))}
-            <hr />
-            <div className="inputGroup mb-0">
-              <input
-                type="text"
-                id={`answer${index}`}
-                name={`answer${index}`}
-                value={questionState.answer}
-                className=""
-                placeholder=""
-                autoComplete="off"
-                onChange={(e) => handleAnswerInputChange(e, index)}
-              />
-              <label htmlFor={`answer${index}`}>Answer</label>
-            </div>
+    <div className="grid grid-cols-6 gap-4">
+      {questionStates.map((questionState, index) => (
+        <div key={index} className="question-box">
+          <div className="flex justify-between items-center">
+            <p className="">{`Question No. - ${index + 1}`}</p>
+            <button
+              type="button"
+              className="bg-rose-500 p-2 rounded"
+              onClick={() => handleDeleteQuestion(index)}
+            >
+              <AiOutlineDelete className="text-white" />
+            </button>
           </div>
-        ))}
-        <div
-          className="flex items-center justify-center add-question cursor-pointer"
-          onClick={() => handleAddQuestion()}
-        >
-          <button type="button">
-            <GrAddCircle size={50} />
-          </button>
-          <h4>Add Question</h4>
+          {Object.keys(questionState.values).map((key) => (
+            <div className="inputGroup" key={key}>
+              <input
+                name={key}
+                value={questionState.values[key]}
+                onChange={(e) => handleQuestionInputChange(e, index)}
+                type="text"
+                required=""
+                autocomplete="off"
+              />
+              <label htmlFor={key}>Value</label>
+            </div>
+          ))}
+          <hr />
+          <div className="inputGroup mb-0">
+            <input
+              type="text"
+              id={`answer${index}`}
+              name={`answer${index}`}
+              value={questionState.answer}
+              className=""
+              placeholder=""
+              autoComplete="off"
+              onChange={(e) => handleAnswerInputChange(e, index)}
+            />
+            <label htmlFor={`answer${index}`}>Answer</label>
+          </div>
         </div>
+      ))}
+      <div
+        className="flex items-center justify-center add-question cursor-pointer"
+        onClick={() => handleAddQuestion()}
+      >
+        <button type="button">
+          <GrAddCircle size={50} />
+        </button>
+        <h4>Add Question</h4>
       </div>
-    </>
+    </div>
   );
 };
 

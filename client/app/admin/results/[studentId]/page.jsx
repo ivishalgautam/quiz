@@ -5,14 +5,17 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { AiOutlineDelete } from "react-icons/ai";
-import { FiExternalLink } from "react-icons/fi";
 
-export default function ResultTable() {
+export default function StudentResultTable({ params: { studentId } }) {
   const [results, setResults] = useState([]);
+  const [date, setDate] = useState({
+    startDate: null,
+    endDate: null,
+  });
 
-  async function getResults() {
+  async function getResults(id) {
     try {
-      const resp = await adminRequest.get("/results", {
+      const resp = await adminRequest.get(`/results/${id}`, {
         headers: { Authorization: `Bearer ${getCookie("token")}` },
       });
       setResults(resp.data);
@@ -23,19 +26,29 @@ export default function ResultTable() {
   }
 
   useEffect(() => {
-    getResults();
+    getResults(studentId);
   }, []);
 
-  function handleSearch(e) {
-    const inputValue = e.target.value.toLowerCase();
-
-    if (inputValue === "") {
-      getResults();
-    } else {
-      const data = results?.filter((item) =>
-        item.fullname.toLowerCase().includes(inputValue)
-      );
-      setResults(data);
+  async function handleSearch(id) {
+    try {
+      const resp = await adminRequest.get(`/results/${id}`, {
+        headers: { Authorization: `Bearer ${getCookie("token")}` },
+      });
+      const filtereData = resp.data
+        .filter(
+          (item) =>
+            new Date(item.created_at).toLocaleDateString() >=
+            new Date(date.startDate).toLocaleDateString()
+        )
+        .filter(
+          (item) =>
+            new Date(item.created_at).toLocaleDateString() <=
+            new Date(date.endDate).toLocaleDateString()
+        );
+      setResults(filtereData);
+      console.log(filtereData);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -78,16 +91,7 @@ export default function ResultTable() {
     },
     {
       name: "Created On",
-      selector: (row) => new Date(row.created_at).toDateString(),
-      width: "10rem",
-    },
-    {
-      name: "All Results",
-      selector: (row) => (
-        <Link href={`/admin/results/${row.student_id}`}>
-          <FiExternalLink className="text-sky-500" size={20} />
-        </Link>
-      ),
+      selector: (row) => new Date(row.created_at).toLocaleDateString(),
       width: "10rem",
     },
     {
@@ -106,19 +110,29 @@ export default function ResultTable() {
 
   return (
     <div className="rounded">
-      <div className="mb-4 flex justify-start">
+      <div className="mb-4 flex items-center justify-between">
         <div className="inputGroup">
           <input
-            type="text"
-            onChange={(e) => handleSearch(e)}
-            placeholder="search"
-            name="search"
+            type="date"
+            onChange={(e) =>
+              setDate((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+            }
+            name="startDate"
           />
         </div>
+        <div className="inputGroup">
+          <input
+            type="date"
+            onChange={(e) =>
+              setDate((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+            }
+            name="endDate"
+          />
+        </div>
+        <button onClick={() => handleSearch(studentId)}>Search</button>
       </div>
-      <div className="rounded-lg overflow-hidden">
-        <DataTable columns={columns} data={results} pagination />
-      </div>
+
+      <DataTable columns={columns} data={results} pagination />
     </div>
   );
 }

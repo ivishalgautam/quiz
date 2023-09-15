@@ -7,6 +7,10 @@ const Test = require("../controller/test.controller");
 const Leads = require("../controller/leads.controller");
 const Levels = require("../controller/level.controller");
 const Result = require("../controller/result.controller");
+const { getDashboardDetails } = require("../controller/dashboard.controller");
+
+// dashboard
+router.get("/dashboard/details", getDashboardDetails);
 
 // leads
 router.delete(
@@ -69,14 +73,30 @@ router.delete(
 );
 
 // levels
-router.post("/levels", Levels.createLevel);
-router.get("/levels", Levels.getLevels);
-router.get("/levels/:levelId", Levels.getLevelById);
-router.delete("/levels/:levelId", Levels.deleteLevelById);
-router.put("/levels/:levelId", Levels.updateLevelById);
+router.post("/levels", verifyTokenAndAuthorization, Levels.createLevel);
+router.get("/levels", verifyTokenAndAuthorization, Levels.getLevels);
+router.get(
+  "/levels/:levelId",
+  verifyTokenAndAuthorization,
+  Levels.getLevelById
+);
+router.delete(
+  "/levels/:levelId",
+  verifyTokenAndAuthorization,
+  Levels.deleteLevelById
+);
+router.put(
+  "/levels/:levelId",
+  verifyTokenAndAuthorization,
+  Levels.updateLevelById
+);
 
 // student results
-router.get("/results", Result.getResults);
-router.get("/results/:studentId", Result.getStudentResults);
+router.get("/results", verifyTokenAndAuthorization, Result.getResults);
+router.get(
+  "/results/:studentId",
+  verifyTokenAndAuthorization,
+  Result.getStudentResults
+);
 
 module.exports = router;
