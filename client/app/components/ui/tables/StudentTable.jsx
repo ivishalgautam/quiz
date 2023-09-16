@@ -53,7 +53,11 @@ export default function StudentTable() {
         setStudents((prev) =>
           prev.map((item) => {
             if (item.id === studentId) {
-              return { ...item, is_subscribed: true };
+              return {
+                ...item,
+                is_subscribed: true,
+                credentials_created: true,
+              };
             }
             return item;
           })

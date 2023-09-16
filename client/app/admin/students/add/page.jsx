@@ -10,25 +10,24 @@ export default function CreateStudentPage() {
     fullname: "",
     email: "",
     phone: "",
-    father_name: "",
-    mother_name: "",
+    guardian_name: "",
+    gender: "",
     dob: "",
     city: "",
-    state: "",
-    address: "",
+    pincode: "",
     subject: "",
-    level_id: "",
+    grade: "",
     package: "",
   });
-  const [levels, setLevels] = useState([]);
+  const [grades, setGrades] = useState([]);
 
   useEffect(() => {
     (async function () {
       try {
-        const resp = await publicRequest.get("/admin/levels", {
+        const resp = await adminRequest.get("/grades", {
           headers: { Authorization: `Bearer ${getCookie("token")}` },
         });
-        setLevels(resp.data);
+        setGrades(resp.data);
       } catch (error) {
         console.log(error);
       }
@@ -53,7 +52,7 @@ export default function CreateStudentPage() {
       );
       if (resp.status === 200) {
         toast.success("Student created successfully.");
-        router.push("/admin/dashboard");
+        router.push("/admin/students");
       }
       console.log(resp.data);
     } catch (error) {
@@ -89,29 +88,29 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
-          {/* level */}
+          {/* grade */}
           <div className="relative flex flex-col justify-end">
             <select
-              name="level_id"
-              id="level_id"
+              name="grade"
+              id="grade"
               onChange={handleOnChange}
               className="my-input"
             >
-              <option disabled>Select level</option>
-              {levels.length <= 0 ? (
-                <option disabled>Loading...</option>
+              <option disabled>Select grade</option>
+              {grades.length <= 0 ? (
+                <option disabled>No grade found</option>
               ) : (
-                levels?.map((level) => {
+                grades?.map((grade) => {
                   return (
-                    <option key={level.id} value={level.id}>
-                      {level.name}
+                    <option key={grade.id} value={grade.id}>
+                      {grade.name}
                     </option>
                   );
                 })
               )}
             </select>
-            <label htmlFor="level_id" className="my-label">
-              Level
+            <label htmlFor="grade" className="my-label">
+              Grade
             </label>
           </div>
 
@@ -126,8 +125,9 @@ export default function CreateStudentPage() {
               <option disabled defaultValue>
                 Select package
               </option>
-              <option value="golden">Golden</option>
-              <option value="diamond">Diamond</option>
+              <option value="dashboard">Dashboard</option>
+              <option value="olympiad">Olympiad</option>
+              <option value="polympiad">Practice Olympiad</option>
             </select>
             <label htmlFor="package" className="my-label">
               Package
@@ -147,6 +147,22 @@ export default function CreateStudentPage() {
             />
             <label htmlFor="fullname" className="my-label">
               Fullname
+            </label>
+          </div>
+
+          {/* gender */}
+          <div className="relative flex flex-col justify-end">
+            <input
+              type="text"
+              id="gender"
+              name="gender"
+              className="my-input peer"
+              placeholder=""
+              autoComplete="off"
+              onChange={handleOnChange}
+            />
+            <label htmlFor="gender" className="my-label">
+              Gender
             </label>
           </div>
 
@@ -182,35 +198,19 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
-          {/* father name */}
+          {/* guardian name */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
-              id="father_name"
-              name="father_name"
+              id="guardian_name"
+              name="guardian_name"
               className="my-input peer"
               placeholder=""
               onChange={handleOnChange}
               autoComplete="off"
             />
-            <label htmlFor="father_name" className="my-label">
-              Father Name
-            </label>
-          </div>
-
-          {/* mother name */}
-          <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="mother_name"
-              name="mother_name"
-              className="my-input peer"
-              placeholder=""
-              onChange={handleOnChange}
-              autoComplete="off"
-            />
-            <label htmlFor="mother_name" className="my-label">
-              Mother Name
+            <label htmlFor="guardian_name" className="my-label">
+              Guardian Name
             </label>
           </div>
 
@@ -246,41 +246,25 @@ export default function CreateStudentPage() {
             </label>
           </div>
 
-          {/* state */}
+          {/* pincode */}
           <div className="relative flex flex-col justify-end">
             <input
-              type="text"
-              id="state"
-              name="state"
+              type="number"
+              id="pincode"
+              name="pincode"
               className="my-input peer"
               placeholder=""
               onChange={handleOnChange}
               autoComplete="off"
             />
-            <label htmlFor="state" className="my-label">
-              State
-            </label>
-          </div>
-
-          {/* address */}
-          <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="Address"
-              name="address"
-              className="my-input peer"
-              placeholder=""
-              onChange={handleOnChange}
-              autoComplete="off"
-            />
-            <label htmlFor="Address" className="my-label">
-              Address
+            <label htmlFor="pincode" className="my-label">
+              Pincode
             </label>
           </div>
         </div>
 
         <div className="mb-4 flex justify-end">
-          <button className="bg-emerald-500 rounded-md py-1 mt-4 px-3 text-white">
+          <button className="bg-emerald-500 rounded-md mt-4 py-3 text-white w-full">
             Create Student
           </button>
         </div>

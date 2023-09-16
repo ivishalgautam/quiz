@@ -10,35 +10,34 @@ async function createStudent(req, res) {
     fullname,
     email,
     phone,
-    father_name,
-    mother_name,
+    guardian_name,
     dob,
     city,
-    state,
-    address,
+    pincode,
     subject,
     package,
-    level_id,
+    grade,
+    gender,
   } = req.body;
+
   try {
-    const { rows, rowCount } = await pool.query(
-      `INSERT INTO students (fullname, email, phone, father_name, mother_name, dob, city, state, address, subject, package, level_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *`,
+    await pool.query(
+      `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
       [
         fullname,
         email,
         phone,
-        father_name,
-        mother_name,
+        guardian_name,
         dob,
         city,
-        state,
-        address,
+        pincode,
         subject,
         package,
-        level_id,
+        grade,
+        gender,
       ]
     );
-    res.json(rows[0]);
+    res.json({ message: "Student created successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

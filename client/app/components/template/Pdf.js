@@ -61,10 +61,20 @@ const Pdf = ({ result }) => {
               position: "absolute",
               top: "43%",
               left: "50%",
-              transform: "translateX(-70%)",
+              textTransform: "capitalize",
+              transform: "translateX(-50%)",
             }}
           >
             {result?.fullname}
+          </Text>
+          <Text
+            style={{
+              position: "absolute",
+              top: "71%",
+              left: "49.2%",
+            }}
+          >
+            {result?.grade}
           </Text>
         </View>
 

@@ -46,9 +46,10 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <section className="h-full flex items-center justify-center">
+    <section className="h-full flex flex-col items-center justify-center">
+      <h2 className="section-heading">Admin login</h2>
       <form onSubmit={handleFormSubmit}>
-        <div className="max-w-lg bg-white shadow p-6 space-y-2 rounded-lg">
+        <div className="max-w-lg bg-white shadow-lg p-6 space-y-2 rounded-lg">
           {/* username */}
           <div className="relative">
             <input
@@ -77,7 +78,9 @@ export default function LoginPage() {
             </label>
           </div>
 
-          <button className="w-full py-3 rounded-md bg-primary">Login</button>
+          <button className="w-full py-3 rounded-md bg-primary text-white">
+            Login
+          </button>
         </div>
       </form>
     </section>

@@ -9,11 +9,18 @@ END;
 
 $ $ LANGUAGE plpgsql;
 
-CREATE TYPE test_type AS ENUM ('practice', 'competitive');
+CREATE TYPE test_type AS ENUM (
+    'practice',
+    'competitive',
+    'olympiad',
+    'eligibility'
+);
 
-CREATE TYPE package_type AS ENUM ('golden', 'diamond');
+CREATE TYPE package_type AS ENUM ('dashboard', 'olympiad', 'polympiad');
 
 CREATE TYPE subject_type AS ENUM ('abacus', 'vedic');
+
+CREATE TYPE gender_type AS ENUM ('male', 'female');
 
 CREATE TABLE admin(
     email VARCHAR(40) NOT NULL,
@@ -25,24 +32,40 @@ INSERT INTO
 VALUES
     ('vishal@gmail.com', '1234');
 
-CREATE TABLE levels(
+CREATE TABLE grades(
     id INT PRIMARY KEY NOT NULL,
     name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tests(
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    level INT REFERENCES levels(id) ON DELETE CASCADE NOT NULL,
+    grade INT NOT NULL,
     test_type test_type NOT NULL,
     subject subject_type NOT NULL,
     is_published BOOLEAN DEFAULT false,
     start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
     duration VARCHAR(40) NOT NULL,
     instructions TEXT [] NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+--this function makes test is_published:true when start_time and deletes when end_time
+CREATE
+OR REPLACE FUNCTION set_published_status() RETURNS TRIGGER AS $ $ BEGIN IF NEW.start_time <= NOW() THEN NEW.is_published = true;
+
+END IF;
+
+RETURN NEW;
+
+END;
+
+$ $ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_set_published_status BEFORE
+INSERT
+    ON tests FOR EACH ROW EXECUTE FUNCTION set_published_status();
 
 -- Create a trigger to call the function before update
 CREATE TRIGGER trigger_update_updated_at BEFORE
@@ -61,16 +84,16 @@ CREATE TABLE students(
     id SERIAL PRIMARY KEY,
     fullname VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    phone VARCHAR(20) NOT NULL,
-    father_name VARCHAR(100),
-    mother_name VARCHAR(100),
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    gender gender_type NOT NULL,
+    gaurdian_name VARCHAR(100),
     dob DATE NOT NULL,
     city VARCHAR(100) NOT NULL,
-    state VARCHAR(100) NOT NULL,
-    address TEXT NOT NULL,
-    subject subject_type NOT NULL,
+    pincode VARCHAR(100) NOT NULL,
+    grade INT NOT NULL,
+    school_name VARCHAR(100),
     is_subscribed BOOLEAN DEFAULT false,
-    level_id INT REFERENCES levels(id) ON DELETE CASCADE NOT NULL,
+    subject subject_type NOT NULL,
     package package_type NOT NULL,
     is_disabled BOOLEAN DEFAULT false,
     credentials_created BOOLEAN DEFAULT false,

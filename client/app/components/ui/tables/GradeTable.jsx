@@ -8,30 +8,30 @@ import { getCookie } from "@/app/lib/cookies";
 import DataTable from "react-data-table-component";
 
 export default function LevelTable() {
-  const [levels, setlevels] = useState([]);
+  const [grades, setGrades] = useState([]);
   useEffect(() => {
-    async function getLevels() {
-      const resp = await adminRequest.get("/levels", {
+    async function getGrades() {
+      const resp = await adminRequest.get("/grades", {
         headers: { Authorization: `Bearer ${getCookie("token")}` },
       });
       console.log(resp.data);
-      setlevels(resp.data);
+      setGrades(resp.data);
     }
-    getLevels();
+    getGrades();
   }, []);
 
   const handleDelete = async (id) => {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/levels/${id}`, {
+      const resp = await adminRequest.delete(`/grades/${id}`, {
         headers: {
           Authorization: `Bearer ${getCookie("token")}`,
         },
       });
       if (resp.status === 200) {
         toast.success(resp.data.message);
-        setlevels((prev) => prev.filter((item) => item.id !== id));
+        setGrades((prev) => prev.filter((item) => item.id !== id));
       }
     }
   };
@@ -44,10 +44,6 @@ export default function LevelTable() {
     {
       name: "Level",
       selector: (row) => row.name,
-    },
-    {
-      name: "Created At",
-      selector: (row) => new Date(row.created_at).toDateString(),
     },
     {
       name: "Actions",
@@ -67,14 +63,14 @@ export default function LevelTable() {
     <>
       <div className="mb-4 flex justify-end">
         <Link
-          href={`/admin/levels/add`}
+          href={`/admin/grades/add`}
           className="bg-emerald-500 rounded-md py-1 px-3 text-white"
         >
-          Add level
+          Add Grade
         </Link>
       </div>
       <div className="rounded-lg overflow-hidden">
-        <DataTable columns={columns} data={levels} pagination />
+        <DataTable columns={columns} data={grades} pagination />
       </div>
     </>
   );

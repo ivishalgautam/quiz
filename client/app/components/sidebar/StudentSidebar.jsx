@@ -1,33 +1,32 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { MdOutlineDashboard } from "react-icons/md";
-import { HiOutlinePencilAlt } from "react-icons/hi";
-import { ImProfile } from "react-icons/im";
-import { CgNotes } from "react-icons/cg";
+import { ImStatsDots } from "react-icons/im";
+import { CgNotes, CgProfile } from "react-icons/cg";
 import { FiLogOut } from "react-icons/fi";
 import { clearAllCookies } from "@/app/lib/cookies";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const navList = [
   {
-    name: "My tests",
-    path: "/student/my-tests",
-    icon: <ImProfile />,
-  },
-  {
     name: "Profile",
     path: "/student/profile",
-    icon: <ImProfile />,
+    icon: <CgProfile size={20} />,
+  },
+  {
+    name: "My tests",
+    path: "/student/my-tests",
+    icon: <CgNotes size={20} />,
   },
   {
     name: "Results",
     path: "/student/results",
-    icon: <ImProfile />,
+    icon: <ImStatsDots size={20} />,
   },
 ];
 
 const StudentSidebar = () => {
+  const pathname = usePathname();
   const router = useRouter();
   function handleLogout() {
     clearAllCookies();
@@ -45,7 +44,11 @@ const StudentSidebar = () => {
             return (
               <li key={key}>
                 <Link
-                  className="text-[1.2rem] text-gray-500 hover:text-blue-950 transition-colors flex gap-2 items-center"
+                  className={`text-[1.2rem] ${
+                    pathname.includes(list.path)
+                      ? "text-blue-950 font-semibold"
+                      : "text-gray-500"
+                  }  hover:text-blue-950 transition-colors flex gap-2 items-center`}
                   href={list.path}
                 >
                   {list.icon}

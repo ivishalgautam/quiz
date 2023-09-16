@@ -1,14 +1,7 @@
 import "./globals.css";
-import { Poppins } from "next/font/google";
 import "@radix-ui/themes/styles.css";
 import { Toaster } from "react-hot-toast";
 import { Theme } from "@radix-ui/themes";
-
-const poppins = Poppins({
-  weight: ["400", "600", "700", "800", "900"],
-  subsets: ["latin"],
-  // display: "swap",
-});
 
 export const metadata = {
   title: "Create Next App",
@@ -18,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${poppins.className} h-screen min-h-screen`}>
+      <body className={`h-screen min-h-screen`}>
         <Theme className="h-full">{children}</Theme>
         <Toaster />
       </body>

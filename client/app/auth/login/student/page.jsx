@@ -49,9 +49,10 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <section className="h-full flex items-center justify-center">
+    <section className="h-full flex items-center justify-center flex-col">
+      <h2 className="section-heading"> Student login </h2>
       <form onSubmit={handleFormSubmit}>
-        <div className="max-w-lg bg-white shadow p-6 space-y-2 rounded-lg">
+        <div className="max-w-lg bg-white shadow-lg p-6 space-y-2 rounded-lg">
           {/* username */}
           <div className="relative">
             <input

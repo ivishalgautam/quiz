@@ -4,27 +4,29 @@ async function createTest(req, res) {
   try {
     const {
       name,
-      level,
+      grade,
       test_type,
       subject,
       start_time,
+      end_time,
       duration,
       instructions,
     } = req.body;
     console.log(req.body);
-    const { rows, rowCount } = await pool.query(
-      `INSERT INTO tests (name, level, test_type, subject, start_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *`,
+    await pool.query(
+      `INSERT INTO tests (name, grade, test_type, subject, start_time, end_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
       [
         name,
-        parseInt(level),
+        parseInt(grade),
         test_type,
         subject,
         start_time,
+        end_time,
         duration,
         instructions,
       ]
     );
-    res.json(rows[0]);
+    res.json({ message: "Test created successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

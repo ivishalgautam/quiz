@@ -2,10 +2,12 @@
 import Question from "@/app/components/template/Question";
 import { getCookie } from "@/app/lib/cookies";
 import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function page({ params: { testId } }) {
+  const router = useRouter;
   const [questionStates, setQuestionStates] = useState([
     {
       values: {
@@ -43,7 +45,9 @@ export default function page({ params: { testId } }) {
         setInputs({
           answer: null,
         });
+        router.push("/admin/tests");
       }
+
       console.log(resp.data);
     } catch (error) {
       console.log(error);

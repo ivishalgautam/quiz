@@ -52,17 +52,21 @@ export default function ResultPage({ params: { studentId } }) {
           </tr>
         </tbody>
       </table>
-      <PDFDownloadLink document={<Pdf result={result[0]} />} filename="FORM">
-        {({ loading }) =>
-          loading ? (
-            <button>Loading Document...</button>
-          ) : (
-            <button className="w-full py-3 bg-primary rounded text-white">
-              Download Certificate
-            </button>
-          )
-        }
-      </PDFDownloadLink>
+      {result[0]?.grade !== "F" && (
+        <PDFDownloadLink document={<Pdf result={result[0]} />} filename="FORM">
+          {({ loading }) =>
+            loading ? (
+              <button className="w-full py-3 bg-primary rounded text-white">
+                Loading Document...
+              </button>
+            ) : (
+              <button className="w-full py-3 bg-primary rounded text-white">
+                Download Certificate
+              </button>
+            )
+          }
+        </PDFDownloadLink>
+      )}
     </section>
   );
 }

@@ -5,7 +5,7 @@ const Question = require("../controller/question.controller");
 const Student = require("../controller/student.controller");
 const Test = require("../controller/test.controller");
 const Leads = require("../controller/leads.controller");
-const Levels = require("../controller/level.controller");
+const Grades = require("../controller/grade.controller");
 const Result = require("../controller/result.controller");
 const { getDashboardDetails } = require("../controller/dashboard.controller");
 
@@ -72,23 +72,23 @@ router.delete(
   Question.deleteQuestionById
 );
 
-// levels
-router.post("/levels", verifyTokenAndAuthorization, Levels.createLevel);
-router.get("/levels", verifyTokenAndAuthorization, Levels.getLevels);
+// Grades
+router.post("/grades", verifyTokenAndAuthorization, Grades.createGrade);
+router.get("/grades", verifyTokenAndAuthorization, Grades.getGrades);
 router.get(
-  "/levels/:levelId",
+  "/grades/:gradeId",
   verifyTokenAndAuthorization,
-  Levels.getLevelById
+  Grades.getGradeById
 );
 router.delete(
-  "/levels/:levelId",
+  "/grades/:gradeId",
   verifyTokenAndAuthorization,
-  Levels.deleteLevelById
+  Grades.deleteGradeById
 );
 router.put(
-  "/levels/:levelId",
+  "/grades/:gradeId",
   verifyTokenAndAuthorization,
-  Levels.updateLevelById
+  Grades.updateGradeById
 );
 
 // student results
