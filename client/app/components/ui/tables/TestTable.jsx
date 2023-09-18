@@ -89,12 +89,12 @@ export default function TestTable() {
       width: "5.6rem",
     },
     {
-      name: "Level",
-      selector: (row) => row.level,
+      name: "Grade",
+      selector: (row) => row.grade,
       width: "4rem",
     },
     {
-      name: "Type",
+      name: "Test type",
       selector: (row) => row.test_type,
       width: "7rem",
     },
@@ -106,6 +106,11 @@ export default function TestTable() {
     {
       name: "Start time",
       selector: (row) => new Date(row.start_time).toLocaleString(),
+      width: "11rem",
+    },
+    {
+      name: "End time",
+      selector: (row) => new Date(row.end_time).toLocaleString(),
       width: "11rem",
     },
     {

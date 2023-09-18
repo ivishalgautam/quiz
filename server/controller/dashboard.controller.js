@@ -8,8 +8,9 @@ async function getDashboardDetails(req, res) {
            COUNT(CASE WHEN s.subject = 'abacus' THEN 1 ELSE NULL END) as abacus_students,
            COUNT(CASE WHEN s.subject = 'vedic' THEN 1 ELSE NULL END) as vedic_students,
            COUNT(CASE WHEN s.is_subscribed = 'true' THEN 1 ELSE NULL END) as subscribed_students,
-           COUNT(CASE WHEN s.package = 'golden' THEN 1 ELSE NULL END) as golden_students,
-           COUNT(CASE WHEN s.package = 'diamond' THEN 1 ELSE NULL END) as diamond_students
+           COUNT(CASE WHEN s.package = 'dashboard' THEN 1 ELSE NULL END) as dashboard_students,
+           COUNT(CASE WHEN s.package = 'olympiad' THEN 1 ELSE NULL END) as olympiad_students,
+           COUNT(CASE WHEN s.package = 'polympiad' THEN 1 ELSE NULL END) as polympiad_students
          FROM students as s;`
     );
     res.json(totalStudents.rows[0]);

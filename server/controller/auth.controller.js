@@ -25,7 +25,7 @@ async function login(req, res) {
     }
 
     const student = await pool.query(
-      `SELECT id, fullname, level_id, package, email FROM students WHERE id = $1`,
+      `SELECT id, fullname, grade, package, email FROM students WHERE id = $1`,
       [credentials.rows[0].student_id]
     );
 

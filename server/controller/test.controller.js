@@ -12,7 +12,6 @@ async function createTest(req, res) {
       duration,
       instructions,
     } = req.body;
-    console.log(req.body);
     await pool.query(
       `INSERT INTO tests (name, grade, test_type, subject, start_time, end_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
       [
@@ -106,11 +105,19 @@ async function getStudentTestsByCategory(req, res) {
     const student = await pool.query(`SELECT * FROM students WHERE id = $1`, [
       studentId,
     ]);
+
     if (student.rowCount === 0)
       return res.status(404).json({ message: "Student not exist!" });
 
     const package = student.rows[0].package;
-    const level = student.rows[0].level_id;
+    const grade = student.rows[0].grade;
+    const test_assigned = student.rows[0].test_assigned;
+    console.log({
+      package,
+      grade,
+      test_assigned,
+      subject: student.rows[0].subject,
+    });
 
     const allTests = await pool.query(
       `SELECT t.*, q.total_questions
@@ -121,20 +128,33 @@ async function getStudentTestsByCategory(req, res) {
             GROUP BY test_id
         ) AS q
         ON t.id = q.test_id
-        WHERE t.is_published = true;`
+        WHERE t.is_published = true AND subject = $1;`,
+      [student.rows[0].subject]
     );
 
     let tests;
-
-    if (package === "golden") {
+    if (package === "dashboard") {
       let practiceTests = allTests.rows
         .filter((item) => item.test_type === "practice")
-        .filter((item) => item.level <= level);
+        .filter((item) => item.grade <= grade);
       tests = practiceTests;
-    }
-
-    if (package === "diamond") {
-      tests = allTests.rows.filter((item) => item.level <= level);
+    } else if (package === "olympiad") {
+      console.log(allTests.rows);
+      tests = allTests.rows
+        .filter((item) => item.id === parseInt(test_assigned))
+        .filter((item) => item.grade <= grade);
+    } else if (package === "polympiad") {
+      // console.log(allTests.rows);
+      tests = allTests.rows
+        .filter(
+          (item) =>
+            item.test_type === "practice" || item.id === parseInt(test_assigned)
+        )
+        .filter((item) => item.grade <= grade);
+    } else if (package === "eligibility") {
+      tests = allTests.rows
+        .filter((item) => item.test_type === "eligibility")
+        .filter((item) => item.grade <= grade);
     }
 
     res.json(tests);

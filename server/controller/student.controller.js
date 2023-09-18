@@ -18,11 +18,13 @@ async function createStudent(req, res) {
     package,
     grade,
     gender,
+    test_assigned,
   } = req.body;
+  // return console.log(req.body);
 
   try {
     await pool.query(
-      `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
+      `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender, test_assigned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
       [
         fullname,
         email,
@@ -35,6 +37,7 @@ async function createStudent(req, res) {
         package,
         grade,
         gender,
+        test_assigned,
       ]
     );
     res.json({ message: "Student created successfully" });

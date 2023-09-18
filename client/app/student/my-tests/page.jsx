@@ -49,8 +49,8 @@ const page = () => {
                       <td className="p-2 w-[70%]">{test.name}</td>
                     </tr>
                     <tr className="w-full flex border-b">
-                      <th className="py-2 bg-gray-300 w-[30%]">Level</th>
-                      <td className="p-2 w-[70%]">{test.level}</td>
+                      <th className="py-2 bg-gray-300 w-[30%]">Grade</th>
+                      <td className="p-2 w-[70%]">{test.grade}</td>
                     </tr>
                     <tr className="w-full flex border-b">
                       <th className="py-2 bg-gray-300 w-[30%]">Type</th>

@@ -17,11 +17,12 @@ export default function InstructionPage({ params: { testId } }) {
   return (
     <section>
       <div className="bg-white p-6 rounded-md shadow flex flex-col gap-4">
-        <ul>
+        <ul className="list-inside list-decimal">
           {test?.instructions?.map((instruction, key) => {
             return <li key={key}>{instruction}</li>;
           })}
         </ul>
+
         <Link
           href={`/student/my-tests/${test.id}`}
           className="bg-primary px-3 py-2 rounded text-white font-semibold text-center"

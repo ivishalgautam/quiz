@@ -11,25 +11,30 @@ import { getCookie } from "@/app/lib/cookies";
 export default function AddTestPage() {
   const router = useRouter();
   const [instructions, setInstructions] = useState([]);
-  const [levels, setLevels] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [grades, setGrades] = useState([]);
+  const [selectedDate, setSelectedDate] = useState({
+    start: new Date(),
+    end: new Date(),
+  });
+
   const [inputs, setInputs] = useState({
     name: "",
-    level: "",
+    grade: "",
     test_type: "",
     subject: "",
     instruction: "",
     start_time: null,
+    end_time: null,
     duration: null,
   });
 
   useEffect(() => {
     (async function () {
       try {
-        const resp = await adminRequest.get("/levels", {
+        const resp = await adminRequest.get("/grades", {
           headers: { Authorization: `Bearer ${getCookie("token")}` },
         });
-        setLevels(resp.data);
+        setGrades(resp.data);
       } catch (error) {
         console.log(error);
       }
@@ -42,10 +47,11 @@ export default function AddTestPage() {
       "/tests",
       {
         name: inputs.name,
-        level: inputs.level,
+        grade: inputs.grade,
         test_type: inputs.test_type,
         subject: inputs.subject,
         start_time: inputs.start_time,
+        end_time: inputs.end_time,
         duration: inputs.duration,
         instructions,
       },
@@ -59,18 +65,32 @@ export default function AddTestPage() {
     console.log(resp.data);
     if (resp.status === 200) {
       toast.success("New test created");
-      // router.push("/admin/tests");
+      router.push("/admin/tests");
     }
   }
 
-  function handleDateChange(e) {
-    const date = new Date(e._d).toISOString();
-    setSelectedDate(new Date(e._d).setSeconds(0));
-    setInputs((prev) => ({
-      ...prev,
-      start_time: date,
-    }));
-    // console.log(date);
+  function handleDateChange(e, type) {
+    if (type === "start") {
+      const date = new Date(e._d).toISOString();
+      setSelectedDate((prev) => ({
+        ...prev,
+        start: new Date(e._d).setSeconds(0),
+      }));
+      setInputs((prev) => ({
+        ...prev,
+        start_time: date,
+      }));
+    } else {
+      const date = new Date(e._d).toISOString();
+      setSelectedDate((prev) => ({
+        ...prev,
+        end: new Date(e._d).setSeconds(0),
+      }));
+      setInputs((prev) => ({
+        ...prev,
+        end_time: date,
+      }));
+    }
   }
 
   function addInstruction() {
@@ -80,12 +100,13 @@ export default function AddTestPage() {
     setInstructions((prev) => [...prev, inputs.instruction]);
     setInputs((prev) => ({ ...prev, instruction: "" }));
   }
+  console.log(inputs);
 
   return (
     <section>
       <h2 className="section-heading">Add new test</h2>
       <form onSubmit={handleFormSubmit}>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-y-2 gap-x-4">
           {/* name */}
           <div className="relative flex flex-col justify-end">
             <input
@@ -93,7 +114,7 @@ export default function AddTestPage() {
               id="name"
               name="name"
               className="my-input peer"
-              placeholder="Name"
+              placeholder=""
               autoComplete="off"
               onChange={(e) =>
                 setInputs((prev) => ({
@@ -107,12 +128,12 @@ export default function AddTestPage() {
             </label>
           </div>
 
-          {/* level */}
+          {/* grade */}
           <div className="relative flex flex-col justify-end">
             <select
-              id="level"
-              name="level"
-              className="my-input"
+              id="grade"
+              name="grade"
+              className="my-input peer"
               onChange={(e) =>
                 setInputs((prev) => ({
                   ...prev,
@@ -121,16 +142,16 @@ export default function AddTestPage() {
               }
             >
               <option hidden></option>
-              {levels?.map((level) => {
+              {grades?.map((grade) => {
                 return (
-                  <option key={level.id} value={level.id}>
-                    {level.name}
+                  <option key={grade.id} value={grade.id}>
+                    {grade.name}
                   </option>
                 );
               })}
             </select>
-            <label htmlFor="level" className="my-label">
-              Level
+            <label htmlFor="grade" className="my-label">
+              Grade
             </label>
           </div>
 
@@ -139,7 +160,7 @@ export default function AddTestPage() {
             <select
               name="subject"
               id="subject"
-              className="my-input"
+              className="my-input peer"
               onChange={(e) =>
                 setInputs((prev) => ({
                   ...prev,
@@ -161,7 +182,7 @@ export default function AddTestPage() {
             <select
               name="test_type"
               id="test_type"
-              className="my-input"
+              className="my-input peer"
               onChange={(e) =>
                 setInputs((prev) => ({
                   ...prev,
@@ -171,7 +192,9 @@ export default function AddTestPage() {
             >
               <option hidden></option>
               <option value="practice">Practice</option>
-              <option value="competitive">Competition</option>
+              <option value="competitive">Competitive</option>
+              <option value="olympiad">Olympiad</option>
+              <option value="eligibility">Eligibility</option>
             </select>
             <label htmlFor="test_type" className="my-label">
               Test type
@@ -181,10 +204,9 @@ export default function AddTestPage() {
           {/* start time */}
           <div className="relative flex flex-col justify-end">
             <Datetime
-              value={selectedDate}
-              onChange={handleDateChange}
+              value={selectedDate.start}
+              onChange={(e) => handleDateChange(e, "start")}
               className="bg-white my-input mt-2"
-              name="start_time"
               utc={true}
             />
             <label htmlFor="start_time" className="my-label">
@@ -192,12 +214,25 @@ export default function AddTestPage() {
             </label>
           </div>
 
-          {/* duration */}
+          {/* end time */}
           <div className="relative flex flex-col justify-end">
+            <Datetime
+              value={selectedDate.end}
+              onChange={(e) => handleDateChange(e, "end")}
+              className="bg-white my-input mt-2"
+              utc={true}
+            />
+            <label htmlFor="end_time" className="my-label">
+              End time
+            </label>
+          </div>
+
+          {/* duration */}
+          <div className="relative flex flex-col justify-end mt-2">
             <select
               name="duration"
               id="duration"
-              className="my-input"
+              className="my-input peer"
               onChange={(e) =>
                 setInputs((prev) => ({
                   ...prev,
@@ -233,7 +268,7 @@ export default function AddTestPage() {
               <input
                 type="text"
                 name="instruction"
-                className="my-input"
+                className="my-input peer"
                 placeholder="instruction"
                 value={inputs.instruction}
                 onChange={(e) =>

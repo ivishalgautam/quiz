@@ -4,26 +4,36 @@ import { adminRequest } from "@/app/lib/requestMethods";
 import React, { useEffect, useState } from "react";
 
 import { PiStudentFill } from "react-icons/pi";
+import Loading from "./loading";
 
 export default function page() {
   const [details, setDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     (async function () {
+      setIsLoading(true);
       try {
+        await new Promise((resolve, reject) => setTimeout(resolve, 4000));
         const resp = await adminRequest.get("/dashboard/details", {
           headers: { Authorization: `Bearer ${getCookie("token")}` },
         });
         console.log(resp.data);
         setDetails(resp.data);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
+        setIsLoading(false);
       }
     })();
   }, []);
-
-  return (
+  if (isLoading) {
+    return <Loading />;
+  }
+  return isLoading ? (
+    <Loading />
+  ) : (
     <section className="h-full">
-      <div className="rounded-md bg-white shadow h-full">
+      <div className="rounded-md bg-white shadow">
         <div className="grid grid-cols-3 gap-4 p-4 text-white">
           {/* total */}
           <div className="dashboard-mini-card bg-blue-400">
@@ -75,8 +85,8 @@ export default function page() {
               <PiStudentFill size={50} />
             </div>
             <div>
-              <h2>Golden Students</h2>
-              <p>{details?.golden_students}</p>
+              <h2>Olympiad Students</h2>
+              <p>{details?.olympiad_students}</p>
             </div>
           </div>
 
@@ -86,8 +96,8 @@ export default function page() {
               <PiStudentFill size={50} />
             </div>
             <div>
-              <h2>Diamond Students</h2>
-              <p>{details?.diamond_students}</p>
+              <h2>P-Olympiad Students</h2>
+              <p>{details?.polympiad_students}</p>
             </div>
           </div>
         </div>

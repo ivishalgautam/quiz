@@ -9,22 +9,24 @@ import { AiFillDelete } from "react-icons/ai";
 export default function StudentUpdate({ params: { studentId } }) {
   const [inputVals, setInputVals] = useState({
     fullname: "",
+    gender: "",
     email: "",
     phone: "",
-    father_name: "",
-    mother_name: "",
+    guardian_name: "",
     dob: "",
     city: "",
-    state: "",
-    address: "",
+    pincode: "",
     subject: "",
-    level_id: "",
+    grade: "",
     package: "",
+    test_assigned: "",
   });
-  const [levels, setLevels] = useState([]);
+  const [grades, setGrades] = useState([]);
+  const [olympiadTests, setOlympiadTests] = useState([]);
   //   console.log(inputVals);
 
   useEffect(() => {
+    // get students
     (async function () {
       try {
         const resp = await adminRequest.get(`/students/${studentId}`, {
@@ -42,12 +44,27 @@ export default function StudentUpdate({ params: { studentId } }) {
       }
     })();
 
+    // get grades
     (async function () {
       try {
-        const resp = await adminRequest.get("/levels", {
+        const resp = await adminRequest.get("/grades", {
           headers: { Authorization: `Bearer ${getCookie("token")}` },
         });
-        setLevels(resp.data);
+        setGrades(resp.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    // get olympiad test
+    (async function () {
+      try {
+        const resp = await adminRequest.get("/tests", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
+        setOlympiadTests(
+          resp.data.filter((item) => item.test_type === "olympiad")
+        );
       } catch (error) {
         console.log(error);
       }
@@ -132,30 +149,30 @@ export default function StudentUpdate({ params: { studentId } }) {
             </label>
           </div>
 
-          {/* level */}
+          {/* grade */}
           <div className="relative flex flex-col justify-end">
             <select
-              name="level_id"
-              id="level_id"
+              name="grade"
+              id="grade"
               onChange={handleOnChange}
               className="my-input"
-              value={inputVals.level_id}
+              value={inputVals.grade}
             >
-              <option disabled>Select level</option>
-              {levels.length <= 0 ? (
+              <option disabled>Select grade</option>
+              {grades.length <= 0 ? (
                 <option disabled>Loading...</option>
               ) : (
-                levels?.map((level) => {
+                grades?.map((grade) => {
                   return (
-                    <option key={level.id} value={level.id}>
-                      {level.name}
+                    <option key={grade.id} value={grade.id}>
+                      {grade.name}
                     </option>
                   );
                 })
               )}
             </select>
-            <label htmlFor="level_id" className="my-label">
-              Level
+            <label htmlFor="grade" className="my-label">
+              Grade
             </label>
           </div>
 
@@ -171,13 +188,39 @@ export default function StudentUpdate({ params: { studentId } }) {
               <option disabled defaultValue>
                 Select package
               </option>
-              <option value="golden">Golden</option>
-              <option value="diamond">Diamond</option>
+              <option value="dashboard">Dashboard</option>
+              <option value="olympiad">Olympiad</option>
+              <option value="polympiad">Practice Olympiad</option>
+              <option value="eligibility">Eligibility</option>
             </select>
             <label htmlFor="package" className="my-label">
               Package
             </label>
           </div>
+
+          {/* test assigned */}
+          {inputVals.package === "polympiad" ||
+          inputVals.package === "olympiad" ? (
+            <div className="relative flex flex-col justify-end">
+              <select
+                name="test_assigned"
+                id="test_assigned"
+                onChange={handleOnChange}
+                className="my-input peer"
+                value={inputVals.test_assigned}
+              >
+                <option disabled defaultValue>
+                  Select package
+                </option>
+                {olympiadTests?.map((test) => {
+                  return <option value={test.id}>{test.name}</option>;
+                })}
+              </select>
+              <label htmlFor="test_assigned" className="my-label">
+                Olympiad test
+              </label>
+            </div>
+          ) : null}
 
           {/* fullname */}
           <div className="relative flex flex-col justify-end">
@@ -193,6 +236,23 @@ export default function StudentUpdate({ params: { studentId } }) {
             />
             <label htmlFor="fullaname" className="my-label">
               Fullname
+            </label>
+          </div>
+
+          {/* gender */}
+          <div className="relative flex flex-col justify-end">
+            <select
+              name="gender"
+              id="gender"
+              className="my-input peer"
+              onChange={handleOnChange}
+              value={inputVals.gender}
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+            <label htmlFor="gender" className="my-label">
+              Gender
             </label>
           </div>
 
@@ -230,37 +290,20 @@ export default function StudentUpdate({ params: { studentId } }) {
             </label>
           </div>
 
-          {/* father name */}
+          {/* guardian name */}
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
-              id="father_name"
-              name="father_name"
+              id="guardian_name"
+              name="guardian_name"
               className="my-input peer"
               placeholder=""
-              value={inputVals.father_name}
+              value={inputVals.guardian_name}
               onChange={handleOnChange}
               autoComplete="off"
             />
-            <label htmlFor="father_name" className="my-label">
-              Father Name
-            </label>
-          </div>
-
-          {/* mother name */}
-          <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="mother_name"
-              name="mother_name"
-              className="my-input peer"
-              placeholder=""
-              value={inputVals.mother_name}
-              onChange={handleOnChange}
-              autoComplete="off"
-            />
-            <label htmlFor="mother_name" className="my-label">
-              Mother Name
+            <label htmlFor="guardian_name" className="my-label">
+              Guardian Name
             </label>
           </div>
 
@@ -303,33 +346,16 @@ export default function StudentUpdate({ params: { studentId } }) {
           <div className="relative flex flex-col justify-end">
             <input
               type="text"
-              id="state"
-              name="state"
+              id="pincode"
+              name="pincode"
               className="my-input peer"
               placeholder=""
-              value={inputVals.state}
+              value={inputVals.pincode}
               onChange={handleOnChange}
               autoComplete="off"
             />
-            <label htmlFor="state" className="my-label">
-              State
-            </label>
-          </div>
-
-          {/* address */}
-          <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="Address"
-              name="address"
-              className="my-input peer"
-              placeholder=""
-              value={inputVals.address}
-              onChange={handleOnChange}
-              autoComplete="off"
-            />
-            <label htmlFor="Address" className="my-label">
-              Address
+            <label htmlFor="pincode" className="my-label">
+              Pincode
             </label>
           </div>
         </div>

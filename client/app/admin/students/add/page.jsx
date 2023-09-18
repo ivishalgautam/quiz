@@ -18,8 +18,10 @@ export default function CreateStudentPage() {
     subject: "",
     grade: "",
     package: "",
+    test_assigned: "",
   });
   const [grades, setGrades] = useState([]);
+  const [olympiadTests, setOlympiadTests] = useState([]);
 
   useEffect(() => {
     (async function () {
@@ -28,6 +30,19 @@ export default function CreateStudentPage() {
           headers: { Authorization: `Bearer ${getCookie("token")}` },
         });
         setGrades(resp.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    (async function () {
+      try {
+        const resp = await adminRequest.get("/tests", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
+        setOlympiadTests(
+          resp.data.filter((item) => item.test_type === "olympiad")
+        );
       } catch (error) {
         console.log(error);
       }
@@ -64,8 +79,8 @@ export default function CreateStudentPage() {
     const { name, value } = e.target;
     setInputVals((prev) => ({ ...prev, [name]: value }));
   }
-
   console.log(inputVals);
+
   return (
     <section>
       <h2 className="section-heading">Create Student</h2>
@@ -120,7 +135,7 @@ export default function CreateStudentPage() {
               name="package"
               id="package"
               onChange={handleOnChange}
-              className="my-input"
+              className="my-input peer"
             >
               <option disabled defaultValue>
                 Select package
@@ -128,11 +143,35 @@ export default function CreateStudentPage() {
               <option value="dashboard">Dashboard</option>
               <option value="olympiad">Olympiad</option>
               <option value="polympiad">Practice Olympiad</option>
+              <option value="eligibility">Eligibility</option>
             </select>
             <label htmlFor="package" className="my-label">
               Package
             </label>
           </div>
+
+          {/* test assigned */}
+          {inputVals.package === "polympiad" ||
+          inputVals.package === "olympiad" ? (
+            <div className="relative flex flex-col justify-end">
+              <select
+                name="test_assigned"
+                id="test_assigned"
+                onChange={handleOnChange}
+                className="my-input peer"
+              >
+                <option disabled defaultValue>
+                  Select package
+                </option>
+                {olympiadTests?.map((test) => {
+                  return <option value={test.id}>{test.name}</option>;
+                })}
+              </select>
+              <label htmlFor="test_assigned" className="my-label">
+                Olympiad test
+              </label>
+            </div>
+          ) : null}
 
           {/* fullname */}
           <div className="relative flex flex-col justify-end">
@@ -152,15 +191,15 @@ export default function CreateStudentPage() {
 
           {/* gender */}
           <div className="relative flex flex-col justify-end">
-            <input
-              type="text"
-              id="gender"
+            <select
               name="gender"
+              id="gender"
               className="my-input peer"
-              placeholder=""
-              autoComplete="off"
               onChange={handleOnChange}
-            />
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
             <label htmlFor="gender" className="my-label">
               Gender
             </label>

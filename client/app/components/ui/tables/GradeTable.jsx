@@ -42,7 +42,7 @@ export default function LevelTable() {
       selector: (row) => row.id,
     },
     {
-      name: "Level",
+      name: "Grade",
       selector: (row) => row.name,
     },
     {

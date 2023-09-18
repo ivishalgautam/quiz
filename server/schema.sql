@@ -16,7 +16,12 @@ CREATE TYPE test_type AS ENUM (
     'eligibility'
 );
 
-CREATE TYPE package_type AS ENUM ('dashboard', 'olympiad', 'polympiad');
+CREATE TYPE package_type AS ENUM (
+    'dashboard',
+    'olympiad',
+    'polympiad',
+    'eligibility'
+);
 
 CREATE TYPE subject_type AS ENUM ('abacus', 'vedic');
 
@@ -34,7 +39,7 @@ VALUES
 
 CREATE TABLE grades(
     id INT PRIMARY KEY NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
 );
 
 CREATE TABLE tests(
@@ -86,13 +91,14 @@ CREATE TABLE students(
     email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL UNIQUE,
     gender gender_type NOT NULL,
-    gaurdian_name VARCHAR(100),
+    guardian_name VARCHAR(100),
     dob DATE NOT NULL,
     city VARCHAR(100) NOT NULL,
     pincode VARCHAR(100) NOT NULL,
     grade INT NOT NULL,
     school_name VARCHAR(100),
     is_subscribed BOOLEAN DEFAULT false,
+    test_assigned VARCHAR(20),
     subject subject_type NOT NULL,
     package package_type NOT NULL,
     is_disabled BOOLEAN DEFAULT false,
