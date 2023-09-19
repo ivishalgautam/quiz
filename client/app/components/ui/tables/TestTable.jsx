@@ -28,7 +28,9 @@ export default function TestTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/tests/${id}`);
+      const resp = await adminRequest.delete(`/tests/${id}`, {
+        headers: { Authorization: `Bearer ${getCookie("token")}` },
+      });
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setTests((prev) => prev.filter((item) => item.id !== id));
@@ -81,7 +83,7 @@ export default function TestTable() {
     {
       name: "Name",
       selector: (row) => row.name,
-      width: "7rem",
+      width: "15%",
     },
     {
       name: "Questions",
@@ -148,6 +150,12 @@ export default function TestTable() {
           >
             Add questions
           </Link>
+          <Link
+            href={`/admin/tests/update/${row.id}`}
+            className="bg-primary rounded px-2 py-1 text-white"
+          >
+            update
+          </Link>
           <button className="bg-rose-500 group p-1 rounded hover:bg-white transition-all border hover:border-rose-500">
             <AiOutlineDelete
               size={20}
@@ -157,7 +165,7 @@ export default function TestTable() {
           </button>
         </div>
       ),
-      width: "20%",
+      width: "30%",
     },
   ];
 

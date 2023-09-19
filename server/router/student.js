@@ -5,7 +5,7 @@ const {
 } = require("../controller/password.controller");
 const Controller = require("../controller/student.controller");
 
-router.post("/students", Controller.createStudent);
+router.post("/", Controller.createStudent);
 router.get("/:studentId", Controller.getStudentById);
 router.put("/:studentId", Controller.updateStudentById);
 router.post("/send-reset-mail", sendResetPasswordAndLink);

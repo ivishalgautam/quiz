@@ -39,7 +39,6 @@ export default function Page({ params: { testId } }) {
 
       if (resp.status === 200) {
         toast.success(resp.data.message);
-        setInputLength(1);
 
         setOptions((prev) => resetValues(prev));
         setInputs({

@@ -133,9 +133,23 @@ CREATE TABLE student_results(
 );
 
 CREATE TABLE leads(
-    id SERIAL NOT NULL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     fullname VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    gaurdian_name VARCHAR(100) NOT NULL
-)
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    gender gender_type NOT NULL,
+    guardian_name VARCHAR(100),
+    dob DATE NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    pincode VARCHAR(100) NOT NULL,
+    grade INT NOT NULL,
+    school_name VARCHAR(100),
+    is_subscribed BOOLEAN DEFAULT false,
+    test_assigned VARCHAR(20),
+    subject subject_type NOT NULL,
+    package package_type NOT NULL,
+    is_disabled BOOLEAN DEFAULT false,
+    credentials_created BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

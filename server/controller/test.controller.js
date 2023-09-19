@@ -113,6 +113,21 @@ async function getStudentTestsByCategory(req, res) {
       return res.json([]);
     }
 
+    if (!student.rows[0].payment_received) {
+      const eligibilityTests = await pool.query(
+        `SELECT t.*, q.total_questions
+        FROM tests AS t
+        JOIN (
+            SELECT test_id, COUNT(*) AS total_questions
+            FROM questions
+            GROUP BY test_id
+        ) AS q
+        ON t.id = q.test_id
+        WHERE t.is_published = true AND t.test_type = 'eligibility';`
+      );
+      return res.json(eligibilityTests.rows);
+    }
+
     const package = student.rows[0].package;
     const grade = student.rows[0].grade;
     const test_assigned = student.rows[0].test_assigned;
@@ -143,10 +158,10 @@ async function getStudentTestsByCategory(req, res) {
         .filter((item) => item.grade <= grade);
       tests = practiceTests;
     } else if (package === "olympiad") {
-      console.log(allTests.rows);
       tests = allTests.rows
         .filter((item) => item.id === parseInt(test_assigned))
         .filter((item) => item.grade <= grade);
+      console.log({ test: allTests.rows });
     } else if (package === "polympiad") {
       // console.log(allTests.rows);
       tests = allTests.rows

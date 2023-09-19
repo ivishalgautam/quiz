@@ -69,14 +69,26 @@ export default function StudentTable() {
   }
 
   async function updateStudent({ id, data }) {
-    setStudents((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          return { ...item, is_disabled: data.is_disabled };
-        }
-        return item;
-      })
-    );
+    console.log(data);
+    if ("is_disabled" in data) {
+      setStudents((prev) =>
+        prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, is_disabled: data.is_disabled };
+          }
+          return item;
+        })
+      );
+    } else {
+      setStudents((prev) =>
+        prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, payment_received: data.payment_received };
+          }
+          return item;
+        })
+      );
+    }
 
     try {
       const resp = await adminRequest.put(
@@ -88,7 +100,6 @@ export default function StudentTable() {
           },
         }
       );
-
       console.log(resp.data);
     } catch (error) {
       console.log(error);
@@ -158,6 +169,25 @@ export default function StudentTable() {
               updateStudent({
                 id: row.id,
                 data: { is_disabled: e.target.checked },
+              });
+            }}
+          />
+          <span className="slider"></span>
+        </label>
+      ),
+      width: "8%",
+    },
+    {
+      name: "Payment received",
+      selector: (row) => (
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={row.payment_received}
+            onChange={(e) => {
+              updateStudent({
+                id: row.id,
+                data: { payment_received: e.target.checked },
               });
             }}
           />

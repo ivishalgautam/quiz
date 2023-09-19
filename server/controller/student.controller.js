@@ -23,6 +23,17 @@ async function createStudent(req, res) {
   // return console.log(req.body);
 
   try {
+    const studentExist = await pool.query(
+      `SELECT * FROM students WHERE email = $1`,
+      [email]
+    );
+
+    if (studentExist.rowCount > 0) {
+      res
+        .status(400)
+        .json({ message: "Student already exist with this email" });
+    }
+
     await pool.query(
       `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender, test_assigned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
       [
