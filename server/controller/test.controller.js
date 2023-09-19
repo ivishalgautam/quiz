@@ -109,6 +109,10 @@ async function getStudentTestsByCategory(req, res) {
     if (student.rowCount === 0)
       return res.status(404).json({ message: "Student not exist!" });
 
+    if (student.rows[0].is_disabled === true) {
+      return res.json([]);
+    }
+
     const package = student.rows[0].package;
     const grade = student.rows[0].grade;
     const test_assigned = student.rows[0].test_assigned;

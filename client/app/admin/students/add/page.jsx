@@ -164,7 +164,11 @@ export default function CreateStudentPage() {
                   Select package
                 </option>
                 {olympiadTests?.map((test) => {
-                  return <option value={test.id}>{test.name}</option>;
+                  return (
+                    <option key={test.id} value={test.id}>
+                      {test.name}
+                    </option>
+                  );
                 })}
               </select>
               <label htmlFor="test_assigned" className="my-label">

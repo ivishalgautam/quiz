@@ -15,8 +15,7 @@ const poppins = Poppins({
 export default function AdminLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
-    if (!getCookie("token")) {
-      clearAllCookies();
+    if (!sessionStorage.getItem("token")) {
       return router.push("/auth/login/admin");
     }
   }, []);

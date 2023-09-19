@@ -25,13 +25,16 @@ export default function LoginPage() {
         ...credentials,
       });
 
+      console.log(data);
+
       if (status === 200) {
         toast.success("Logged in successfully");
-        setCookie("email", data.email, 2);
-        setCookie("fullname", data.fullname, 2);
-        setCookie("student_id", data.id, 2);
-        setCookie("package", data.package, 2);
-        setCookie("level_id", data.level_id, 2);
+        sessionStorage.setItem("email", data.student.email);
+        sessionStorage.setItem("fullname", data.student.fullname);
+        sessionStorage.setItem("student_id", data.student.id);
+        sessionStorage.setItem("package", data.student.package);
+        sessionStorage.setItem("level_id", data.student.level_id);
+        sessionStorage.setItem("token", data.token);
         router.push("/student/my-tests");
       }
 

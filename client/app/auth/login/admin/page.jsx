@@ -26,8 +26,8 @@ export default function LoginPage() {
 
       if (status === 200) {
         toast.success("Logged in successfully");
-        setCookie("email", data.email, 2);
-        setCookie("token", data.access_token, 2);
+        sessionStorage.setItem("email", data.email);
+        sessionStorage.setItem("token", data.access_token);
 
         router.push("/admin/dashboard");
       }

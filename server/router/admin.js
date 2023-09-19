@@ -10,7 +10,11 @@ const Result = require("../controller/result.controller");
 const { getDashboardDetails } = require("../controller/dashboard.controller");
 
 // dashboard
-router.get("/dashboard/details", getDashboardDetails);
+router.get(
+  "/dashboard/details",
+  verifyTokenAndAuthorization,
+  getDashboardDetails
+);
 
 // leads
 router.delete(
@@ -52,7 +56,11 @@ router.get("/tests", verifyTokenAndAuthorization, Test.getAdminTests);
 router.post("/tests", verifyTokenAndAuthorization, Test.createTest);
 router.get("/tests/:testId", verifyTokenAndAuthorization, Test.getTestById);
 router.put("/tests/:testId", verifyTokenAndAuthorization, Test.updateTestById);
-router.delete("/tests/:testId", Test.deleteTestById);
+router.delete(
+  "/tests/:testId",
+  verifyTokenAndAuthorization,
+  Test.deleteTestById
+);
 
 // questions
 router.post(

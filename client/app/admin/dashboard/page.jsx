@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { PiStudentFill } from "react-icons/pi";
 import Loading from "./loading";
 
-export default function page() {
+export default function Dashboard() {
   const [details, setDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -26,12 +26,12 @@ export default function page() {
       }
     })();
   }, []);
+
   if (isLoading) {
     return <Loading />;
   }
-  return isLoading ? (
-    <Loading />
-  ) : (
+
+  return (
     <section className="h-full">
       <div className="rounded-md bg-white shadow">
         <div className="grid grid-cols-3 gap-4 p-4 text-white">

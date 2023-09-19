@@ -1,4 +1,5 @@
 const { login, adminLogin } = require("../controller/auth.controller");
+const { isLoggedIn } = require("../middleware/verifyToken");
 
 const router = require("express").Router();
 

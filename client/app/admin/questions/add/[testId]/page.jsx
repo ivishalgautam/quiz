@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-export default function page({ params: { testId } }) {
+export default function Page({ params: { testId } }) {
   const router = useRouter;
   const [questionStates, setQuestionStates] = useState([
     {

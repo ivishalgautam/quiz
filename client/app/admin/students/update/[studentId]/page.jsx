@@ -23,53 +23,7 @@ export default function StudentUpdate({ params: { studentId } }) {
   });
   const [grades, setGrades] = useState([]);
   const [olympiadTests, setOlympiadTests] = useState([]);
-  //   console.log(inputVals);
-
-  useEffect(() => {
-    // get students
-    (async function () {
-      try {
-        const resp = await adminRequest.get(`/students/${studentId}`, {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        });
-        for (const [key, value] of Object.entries(resp.data)) {
-          if (key in inputVals) {
-            setInputVals((prev) => ({ ...prev, [key]: value }));
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-
-    // get grades
-    (async function () {
-      try {
-        const resp = await adminRequest.get("/grades", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
-        setGrades(resp.data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-
-    // get olympiad test
-    (async function () {
-      try {
-        const resp = await adminRequest.get("/tests", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
-        setOlympiadTests(
-          resp.data.filter((item) => item.test_type === "olympiad")
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+  console.log(inputVals);
 
   const router = useRouter();
 
@@ -117,6 +71,61 @@ export default function StudentUpdate({ params: { studentId } }) {
       }
     }
   };
+
+  useEffect(() => {
+    // get students
+    (async function () {
+      try {
+        const resp = await adminRequest.get(`/students/${studentId}`, {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        });
+        for (const [key, value] of Object.entries(resp.data)) {
+          if (key in inputVals) {
+            setInputVals((prev) => ({ ...prev, [key]: value }));
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    // get grades
+    (async function () {
+      try {
+        const resp = await adminRequest.get("/grades", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
+        setGrades(resp.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    // get olympiad test
+    (async function () {
+      try {
+        const resp = await adminRequest.get("/tests", {
+          headers: { Authorization: `Bearer ${getCookie("token")}` },
+        });
+        setOlympiadTests(
+          resp.data.filter((item) => item.test_type === "olympiad")
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (
+      inputVals.package === "dashboard" ||
+      inputVals.package === "eligibility"
+    ) {
+      setInputVals((prev) => ({ ...prev, test_assigned: "" }));
+    }
+  }, [inputVals.package]);
 
   return (
     <section>

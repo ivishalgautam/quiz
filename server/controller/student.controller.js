@@ -56,12 +56,13 @@ async function updateStudentById(req, res) {
     .join(", ");
 
   const updateValues = Object.values(data);
+  console.log({ updateColumns, updateValues });
 
   try {
     const { rows, rowCount } = await pool.query(
       `UPDATE students SET ${updateColumns} WHERE id = $${
         updateValues.length + 1
-      } returning *`,
+      } returning *;`,
       [...updateValues, studentId]
     );
 

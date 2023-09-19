@@ -5,10 +5,14 @@ export function setCookie(name, value, daysToExpire) {
   document.cookie = `${name}=${value}; ${expires}; path=/`;
 }
 
+// export function getCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(";").shift();
+// }
+
 export function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
+  return sessionStorage.getItem(name);
 }
 
 export function checkCookie(name) {
@@ -18,9 +22,13 @@ export function checkCookie(name) {
 }
 
 export function clearAllCookies() {
-  document.cookie.split(";").forEach(function (cookie) {
-    document.cookie =
-      cookie.replace(/^ +/, "").split("=")[0] +
-      "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  });
+  sessionStorage.clear();
 }
+
+// export function clearAllCookies() {
+//   document.cookie.split(";").forEach(function (cookie) {
+//     document.cookie =
+//       cookie.replace(/^ +/, "").split("=")[0] +
+//       "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+//   });
+// }

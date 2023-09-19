@@ -4,7 +4,7 @@ import Link from "next/link";
 import { publicRequest } from "@/app/lib/requestMethods";
 import { getCookie } from "@/app/lib/cookies";
 
-const page = () => {
+const Page = () => {
   const [tests, setTests] = useState([]);
   useEffect(() => {
     (async function () {
@@ -89,4 +89,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
