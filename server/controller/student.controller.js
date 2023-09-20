@@ -1,9 +1,114 @@
 const { pool } = require("../config/db");
+const csv = require("csv-parser");
+const fs = require("fs");
 const {
   generateUsername,
   generatePassword,
 } = require("../helper/credentialGenerator");
 const { sendEmail } = require("../helper/mailer");
+
+async function importStudents(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded." });
+    }
+
+    const results = [];
+
+    fs.createReadStream(req.file.path)
+      .pipe(csv())
+      .on("data", async (data) => {
+        // Process each row of data and add it to the results array
+        results.push(data);
+        const {
+          fullname,
+          email,
+          phone,
+          gender,
+          guardian_name,
+          dob,
+          city,
+          pincode,
+          grade,
+          school_name,
+          test_assigned,
+          subject,
+          package,
+        } = data;
+
+        const studentExist = await pool.query(
+          `SELECT * FROM students WHERE email = $1 OR phone = $2`,
+          [email, phone]
+        );
+
+        // console.log(student.rows);
+        if (studentExist.rowCount > 0) {
+          return;
+        }
+
+        const student = await pool.query(
+          `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender, school_name, test_assigned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *;`,
+          [
+            fullname,
+            email,
+            phone,
+            guardian_name,
+            new Date(),
+            city,
+            pincode,
+            subject,
+            package,
+            grade,
+            gender,
+            school_name,
+            test_assigned,
+          ]
+        );
+
+        const username = await generateUsername(
+          student.rows[0].fullname,
+          student.rows[0].id
+        );
+        const password = await generatePassword(student.rows[0].dob);
+        console.log(student.rows[0]);
+
+        const credentialsExist = await pool.query(
+          `SELECT * FROM student_credentials WHERE student_id = $1`,
+          [student.rows[0].id]
+        );
+
+        if (credentialsExist.rowCount > 0) {
+          return res.json({ message: "Already created!" });
+        }
+
+        const credentials = await pool.query(
+          `INSERT INTO student_credentials (username, password, student_id) VALUES ($1, $2, $3) returning *`,
+          [username, password, student.rows[0].id]
+        );
+
+        if (credentials.rowCount > 0) {
+          await pool.query(
+            `UPDATE students SET credentials_created = $1, is_subscribed = $2 WHERE id = $3`,
+            [true, true, student.rows[0].id]
+          );
+          sendEmail(student.rows[0].email, username, password);
+        }
+      })
+      .on("end", () => {
+        res.json({ message: "Students imported successfully" });
+        fs.unlinkSync(req.file.path);
+      })
+      .on("error", (error) => {
+        console.error(error);
+        res.status(500).json({
+          message: "An error occurred while reading the uploaded file.",
+        });
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
 
 async function createStudent(req, res) {
   const {
@@ -194,4 +299,5 @@ module.exports = {
   getStudentById,
   getStudents,
   generateCredentials,
+  importStudents,
 };

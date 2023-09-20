@@ -4,6 +4,8 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import { getCookie } from "@/app/lib/cookies";
+import Link from "next/link";
+import { FaFileImport } from "react-icons/fa";
 
 export default function CreateStudentPage() {
   const [inputVals, setInputVals] = useState({
@@ -79,11 +81,18 @@ export default function CreateStudentPage() {
     const { name, value } = e.target;
     setInputVals((prev) => ({ ...prev, [name]: value }));
   }
-  console.log(inputVals);
 
   return (
     <section>
-      <h2 className="section-heading">Create Student</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="section-heading">Create Student</h2>
+        <Link
+          href="/admin/students/add/import"
+          className="bg-primary py-1 px-4 rounded-md text-white flex items-center justify-center gap-2"
+        >
+          Import <FaFileImport size={20} />
+        </Link>
+      </div>
 
       <form onSubmit={handleFormSubmit}>
         <div className="grid grid-cols-3 gap-2">

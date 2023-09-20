@@ -20,7 +20,6 @@ async function createLead(req, res) {
     gender,
     test_assigned,
   } = req.body;
-  // return console.log(req.body);
 
   try {
     const leadExist = await pool.query(`SELECT * FROM leads WHERE email = $1`, [
@@ -83,7 +82,6 @@ async function createLead(req, res) {
       student.rows[0].id
     );
     const password = await generatePassword(student.rows[0].dob);
-    console.log(student.rows[0]);
 
     const credentialsExist = await pool.query(
       `SELECT * FROM student_credentials WHERE student_id = $1`,
@@ -104,11 +102,7 @@ async function createLead(req, res) {
         `UPDATE students SET credentials_created = $1, is_subscribed = $2 WHERE id = $3`,
         [true, true, student.rows[0].id]
       );
-      sendEmail(
-        student.rows[0].email,
-        student.rows[0].username,
-        student.rows[0].password
-      );
+      sendEmail(student.rows[0].email, username, password);
     }
 
     res.json({
