@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AiFillDelete } from "react-icons/ai";
+import { RxCrossCircled } from "react-icons/rx";
 
 export default function StudentUpdate({ params: { studentId } }) {
   const [inputVals, setInputVals] = useState({
@@ -19,11 +20,13 @@ export default function StudentUpdate({ params: { studentId } }) {
     subject: "",
     grade: "",
     package: "",
-    test_assigned: "",
+    test_assigned: [],
   });
   const [grades, setGrades] = useState([]);
   const [olympiadTests, setOlympiadTests] = useState([]);
-  console.log(inputVals);
+  const [olympiadTestsOptions, setOlympiadTestsOptions] = useState([]);
+  const [selectedTests, setSelectedTests] = useState([]);
+  // console.log({ selectedTests, olympiadTests, olympiadTestsOptions });
 
   const router = useRouter();
 
@@ -53,6 +56,14 @@ export default function StudentUpdate({ params: { studentId } }) {
 
   function handleOnChange(e) {
     const { name, value } = e.target;
+    console.log(value);
+    if (name === "test_assigned") {
+      setInputVals((prev) => ({
+        ...prev,
+        [name]: [...prev[name], parseInt(value)],
+      }));
+      return;
+    }
     setInputVals((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -126,6 +137,38 @@ export default function StudentUpdate({ params: { studentId } }) {
       setInputVals((prev) => ({ ...prev, test_assigned: "" }));
     }
   }, [inputVals.package]);
+
+  function handleSelectTest() {
+    setSelectedTests(
+      olympiadTests?.filter((item) =>
+        inputVals?.test_assigned.map((i) => parseInt(i)).includes(item.id)
+      )
+    );
+
+    setOlympiadTestsOptions(
+      olympiadTests?.filter(
+        (item) =>
+          !inputVals?.test_assigned.map((i) => parseInt(i)).includes(item.id)
+      )
+    );
+  }
+
+  function handleDeleteOption(id) {
+    setInputVals((prev) => ({
+      ...prev,
+      test_assigned: inputVals.test_assigned
+        .map((i) => parseInt(i))
+        .filter((item) => item !== id),
+    }));
+  }
+
+  useEffect(() => {
+    handleSelectTest();
+  }, [inputVals.test_assigned]);
+
+  useEffect(() => {
+    setOlympiadTestsOptions(olympiadTests);
+  }, [olympiadTests]);
 
   return (
     <section>
@@ -210,19 +253,35 @@ export default function StudentUpdate({ params: { studentId } }) {
           {/* test assigned */}
           {inputVals.package === "polympiad" ||
           inputVals.package === "olympiad" ? (
-            <div className="relative flex flex-col justify-end">
+            <div className="relative flex flex-col justify-end col-span-3">
+              <div className="col-span-3 flex flex-wrap gap-2 py-4 absolute left-3 top-3">
+                {selectedTests.map((item) => (
+                  <span
+                    key={item.id}
+                    className="bg-primary text-sm text-white p-1 px-2 rounded"
+                  >
+                    {item.name}
+                    <RxCrossCircled
+                      className="inline ml-2"
+                      size={20}
+                      onClick={() => handleDeleteOption(item.id)}
+                    />
+                  </span>
+                ))}
+              </div>
               <select
                 name="test_assigned"
                 id="test_assigned"
                 onChange={handleOnChange}
                 className="my-input peer"
-                value={inputVals.test_assigned}
               >
-                <option disabled defaultValue>
-                  Select package
-                </option>
-                {olympiadTests?.map((test) => {
-                  return <option value={test.id}>{test.name}</option>;
+                <option hidden>Select package</option>
+                {olympiadTestsOptions?.map((test) => {
+                  return (
+                    <option key={test.id} value={test.id}>
+                      {test.name}
+                    </option>
+                  );
                 })}
               </select>
               <label htmlFor="test_assigned" className="my-label">

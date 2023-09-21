@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest } from "@/app/lib/requestMethods";
 import { getCookie } from "@/app/lib/cookies";
 import Link from "next/link";
 import { FaFileImport } from "react-icons/fa";
+import { RxCrossCircled } from "react-icons/rx";
 
 export default function CreateStudentPage() {
   const [inputVals, setInputVals] = useState({
@@ -20,10 +21,13 @@ export default function CreateStudentPage() {
     subject: "",
     grade: "",
     package: "",
-    test_assigned: "",
+    test_assigned: [],
   });
   const [grades, setGrades] = useState([]);
   const [olympiadTests, setOlympiadTests] = useState([]);
+  const [olympiadTestsOptions, setOlympiadTestsOptions] = useState([]);
+  const [selectedTests, setSelectedTests] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     (async function () {
@@ -51,8 +55,6 @@ export default function CreateStudentPage() {
     })();
   }, []);
 
-  const router = useRouter();
-
   async function handleFormSubmit(e) {
     e.preventDefault();
     try {
@@ -79,8 +81,43 @@ export default function CreateStudentPage() {
 
   function handleOnChange(e) {
     const { name, value } = e.target;
+    if (name === "test_assigned") {
+      setInputVals((prev) => ({
+        ...prev,
+        [name]: [...prev[name], parseInt(value)],
+      }));
+      return;
+    }
     setInputVals((prev) => ({ ...prev, [name]: value }));
   }
+
+  function handleSelectTest() {
+    setSelectedTests(
+      olympiadTests?.filter((item) => inputVals.test_assigned.includes(item.id))
+    );
+
+    setOlympiadTestsOptions(
+      olympiadTests?.filter(
+        (item) => !inputVals.test_assigned.includes(item.id)
+      )
+    );
+  }
+
+  function handleDeleteOption(id) {
+    setInputVals((prev) => ({
+      ...prev,
+      test_assigned: inputVals.test_assigned.filter((item) => item !== id),
+    }));
+  }
+
+  useEffect(() => {
+    console.log("changed");
+    handleSelectTest();
+  }, [inputVals.test_assigned]);
+
+  useEffect(() => {
+    setOlympiadTestsOptions(olympiadTests);
+  }, [olympiadTests]);
 
   return (
     <section>
@@ -162,17 +199,30 @@ export default function CreateStudentPage() {
           {/* test assigned */}
           {inputVals.package === "polympiad" ||
           inputVals.package === "olympiad" ? (
-            <div className="relative flex flex-col justify-end">
+            <div className="relative flex flex-col justify-end col-span-3">
+              <div className="col-span-3 flex flex-wrap gap-2 py-4 absolute left-3 top-3">
+                {selectedTests.map((item) => (
+                  <span
+                    key={item.id}
+                    className="bg-primary text-sm text-white p-1 px-2 rounded"
+                  >
+                    {item.name}
+                    <RxCrossCircled
+                      className="inline ml-2"
+                      size={20}
+                      onClick={() => handleDeleteOption(item.id)}
+                    />
+                  </span>
+                ))}
+              </div>
               <select
                 name="test_assigned"
                 id="test_assigned"
                 onChange={handleOnChange}
                 className="my-input peer"
               >
-                <option disabled defaultValue>
-                  Select package
-                </option>
-                {olympiadTests?.map((test) => {
+                <option hidden>Select package</option>
+                {olympiadTestsOptions?.map((test) => {
                   return (
                     <option key={test.id} value={test.id}>
                       {test.name}

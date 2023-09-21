@@ -23,6 +23,11 @@ const navList = [
     path: "/student/results",
     icon: <ImStatsDots size={20} />,
   },
+  {
+    name: "Analytics",
+    path: "/student/analytics",
+    icon: <ImStatsDots size={20} />,
+  },
 ];
 
 const StudentSidebar = () => {

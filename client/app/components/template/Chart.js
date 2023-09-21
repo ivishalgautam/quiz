@@ -11,7 +11,6 @@ import {
 } from "chart.js/auto";
 
 const Chart = ({ points }) => {
-  console.log(points);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
@@ -20,7 +19,7 @@ const Chart = ({ points }) => {
   // Sample data for the chart
   useEffect(() => {
     setChartData({
-      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      labels: [...points],
       datasets: [
         {
           label: "Example Data",
@@ -46,7 +45,7 @@ const Chart = ({ points }) => {
         },
       },
     });
-  }, []);
+  }, [points]);
 
   return (
     <div className="chart">

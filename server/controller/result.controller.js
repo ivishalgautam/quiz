@@ -56,23 +56,24 @@ async function getResults(req, res) {
 async function getStudentResults(req, res) {
   const studentId = parseInt(req.params.studentId);
   try {
-    const { rows, rowCount } = await pool.query(
+    const { rows } = await pool.query(
       `
       SELECT 
             sr.*, 
             s.id as student_id, 
             s.fullname, 
             t.id as test_id, 
-            t.name as test_name
-        FROM 
+            t.name as test_name,
+            t.test_type
+        FROM
             student_results as sr
-        JOIN 
+        JOIN
             students as s ON sr.student_id = s.id
-        JOIN 
+        JOIN
             tests as t on sr.test_id = t.id
-        WHERE 
-            sr.student_id = $1 
-        ORDER BY created_at DESC`,
+        WHERE
+            sr.student_id = $1
+            ORDER BY created_at ASC;`,
       [studentId]
     );
     res.json(rows);

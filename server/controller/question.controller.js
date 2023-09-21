@@ -72,6 +72,7 @@ async function deleteQuestionById(req, res) {
 
 async function getQuestionsByTestId(req, res) {
   const testId = parseInt(req.params.testId);
+  const { studentId } = req.body;
 
   try {
     const testDisabled = await pool.query(`SELECT * FROM tests WHERE id = $1`, [
@@ -80,7 +81,7 @@ async function getQuestionsByTestId(req, res) {
     if (!testDisabled.rows[0].is_published) {
       return res.json([]);
     }
-    const { rows, rowCount } = await pool.query(
+    const { rows } = await pool.query(
       `SELECT * FROM questions WHERE test_id = $1`,
       [testId]
     );

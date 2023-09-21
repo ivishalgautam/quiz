@@ -49,7 +49,7 @@ const Page = ({ params: { testId } }) => {
         grade: calculateGrade(TP, points.totalPoints, questions.length),
       });
       if (resp.status === 200) {
-        router.push(`/student/result/${getCookie("student_id")}`);
+        router.replace(`/student/result/${getCookie("student_id")}`);
       }
     } catch (error) {
       console.log(error);
@@ -60,7 +60,9 @@ const Page = ({ params: { testId } }) => {
     (async function () {
       setIsLoading(true);
       try {
-        const { data } = await publicRequest.get(`/questions/${testId}`);
+        const { data } = await publicRequest.get(`/questions/${testId}`, {
+          studentId: `${getCookie("student_id")}`,
+        });
         setQuestions(data);
         console.log(data);
         setAnswers(data.map((item) => item.answer));
@@ -122,6 +124,15 @@ const Page = ({ params: { testId } }) => {
       handleSubmitTest();
     }
   }, [shouldSubmit]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const referrer = document.referrer;
+      if (referrer && referrer.length > 0) {
+        console.log(referrer);
+      }
+    }
+  }, []);
 
   return (
     <section>

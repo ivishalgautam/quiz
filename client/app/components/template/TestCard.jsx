@@ -1,7 +1,12 @@
-import Link from "next/link";
+"use client";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function TestCard({ test }) {
+  const router = useRouter();
+  function handleNavigate(id) {
+    router.replace(`/student/my-tests/instructions/${id}`);
+  }
   return (
     <div className="bg-white p-6 max-w-[30rem] rounded-md gap-y-4">
       <div className="flex items-center justify-between font-bold text-xl">
@@ -39,12 +44,12 @@ export default function TestCard({ test }) {
         </tbody>
       </table>
       <div>
-        <Link
-          href={`/student/my-tests/instructions/${test.id}`}
+        <button
+          onClick={() => handleNavigate(test.id)}
           className="bg-primary hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold"
         >
           Start test
-        </Link>
+        </button>
       </div>
     </div>
   );

@@ -39,7 +39,6 @@ async function updateTestById(req, res) {
     .map((column, key) => `${column} = $${key + 1}`)
     .join(", ");
   const updateValues = Object.values(data);
-  console.log(updateColumns, updateValues);
 
   try {
     const { rows, rowCount } = await pool.query(
@@ -131,12 +130,6 @@ async function getStudentTestsByCategory(req, res) {
     const package = student.rows[0].package;
     const grade = student.rows[0].grade;
     const test_assigned = student.rows[0].test_assigned;
-    console.log({
-      package,
-      grade,
-      test_assigned,
-      subject: student.rows[0].subject,
-    });
 
     const allTests = await pool.query(
       `SELECT t.*, q.total_questions
@@ -158,18 +151,40 @@ async function getStudentTestsByCategory(req, res) {
         .filter((item) => item.grade <= grade);
       tests = practiceTests;
     } else if (package === "olympiad") {
-      tests = allTests.rows
-        .filter((item) => item.id === parseInt(test_assigned))
-        .filter((item) => item.grade <= grade);
-      console.log({ test: allTests.rows });
+      // if(){}
+      const testAlreadyTaken = await pool.query(
+        `SELECT * FROM student_results WHERE student_id = $1 AND test_id = $2;`,
+        [student.rows[0].id, student.rows[0].test_assigned]
+      );
+      if (testAlreadyTaken.rowCount > 0) {
+        tests = [];
+      } else {
+        tests = allTests.rows
+          .filter((item) => item.id === parseInt(test_assigned))
+          .filter((item) => item.grade <= grade);
+      }
     } else if (package === "polympiad") {
-      // console.log(allTests.rows);
-      tests = allTests.rows
-        .filter(
-          (item) =>
-            item.test_type === "practice" || item.id === parseInt(test_assigned)
-        )
-        .filter((item) => item.grade <= grade);
+      const studentTests = student.rows[0].test_assigned.map((item) =>
+        parseInt(item)
+      );
+      console.log(studentTests);
+      const testAlreadyTaken = await pool.query(
+        `SELECT * FROM student_results WHERE student_id = $1 AND test_id = ANY($2);`,
+        [student.rows[0].id, studentTests]
+      );
+
+      if (testAlreadyTaken.rowCount > 0) {
+        tests = allTests.rows
+          .filter((item) => item.test_type === "practice")
+          .filter((item) => item.grade <= grade);
+      } else {
+        tests = allTests.rows
+          .filter(
+            (item) =>
+              item.test_type === "practice" || studentTests.includes(item.id)
+          )
+          .filter((item) => item.grade <= grade);
+      }
     } else if (package === "eligibility") {
       tests = allTests.rows
         .filter((item) => item.test_type === "eligibility")

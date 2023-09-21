@@ -28,32 +28,43 @@ export default function ResultPage({ params: { studentId } }) {
 
   return (
     <section>
-      <table className="w-full my-4" key={result[0]?.id}>
+      <table className="w-full my-4" key={result[result?.length - 1]?.id}>
         <tbody className="flex flex-col items-start">
           <tr className="w-full flex border-b">
             <th className="py-2 bg-gray-300 w-[30%]">Your grades</th>
-            <td className="p-2 w-[70%]">{result[0]?.grade}</td>
+            <td className="p-2 w-[70%]">{result[result?.length - 1]?.grade}</td>
           </tr>
           <tr className="w-full flex border-b">
             <th className="py-2 bg-gray-300 w-[30%]">Your points</th>
-            <td className="p-2 w-[70%]">{result[0]?.student_points}</td>
+            <td className="p-2 w-[70%]">
+              {result[result?.length - 1]?.student_points}
+            </td>
           </tr>
           <tr className="w-full flex border-b">
             <th className="py-2 bg-gray-300 w-[30%]">Total points</th>
-            <td className="p-2 w-[70%]">{result[0]?.total_points}</td>
+            <td className="p-2 w-[70%]">
+              {result[result?.length - 1]?.total_points}
+            </td>
           </tr>
           <tr className="w-full flex border-b">
             <th className="py-2 bg-gray-300 w-[30%]">Question attempted</th>
-            <td className="p-2 w-[70%]">{result[0]?.student_attempted}</td>
+            <td className="p-2 w-[70%]">
+              {result[result?.length - 1]?.student_attempted}
+            </td>
           </tr>
           <tr className="w-full flex border-b">
             <th className="py-2 bg-gray-300 w-[30%]">Total questions</th>
-            <td className="p-2 w-[70%]">{result[0]?.total_questions}</td>
+            <td className="p-2 w-[70%]">
+              {result[result?.length - 1]?.total_questions}
+            </td>
           </tr>
         </tbody>
       </table>
       {result[0]?.grade !== "F" && (
-        <PDFDownloadLink document={<Pdf result={result[0]} />} filename="FORM">
+        <PDFDownloadLink
+          document={<Pdf result={result[result?.length - 1]} />}
+          filename="FORM"
+        >
           {({ loading }) =>
             loading ? (
               <button className="w-full py-3 bg-primary rounded text-white">
