@@ -1,22 +1,16 @@
 "use client";
-import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
-import { getCookie } from "@/app/lib/cookies";
 import DataTable from "react-data-table-component";
 
 export default function TestTable() {
   const [tests, setTests] = useState([]);
   async function getTests() {
-    const resp = await adminRequest.get("/tests", {
-      headers: {
-        Authorization: `Bearer ${getCookie("token")}`,
-      },
-    });
-    console.log(resp.data);
+    const resp = await adminRequest.get("/tests");
+    // console.log(resp.data);
     setTests(resp.data);
   }
 
@@ -28,9 +22,7 @@ export default function TestTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/tests/${id}`, {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.delete(`/tests/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setTests((prev) => prev.filter((item) => item.id !== id));
@@ -49,17 +41,9 @@ export default function TestTable() {
     );
 
     try {
-      const resp = await adminRequest.put(
-        `/tests/${id}`,
-        { ...data },
-        {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        }
-      );
+      const resp = await adminRequest.put(`/tests/${id}`, { ...data });
 
-      console.log(resp.data);
+      // console.log(resp.data);
     } catch (error) {
       console.log(error);
       toast.error("Some error occurred while updating!");
@@ -203,13 +187,17 @@ export default function TestTable() {
     <>
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <div className="inputGroup">
+          <div className="relative">
             <input
               type="text"
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="search"
               name="search"
+              className="my-input peer"
             />
+            <label htmlFor="search" className="my-label">
+              Search
+            </label>
           </div>
         </div>
         <div>

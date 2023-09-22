@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const { verifyTokenAndAuthorization } = require("../middleware/verifyToken");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const Question = require("../controller/question.controller");
 const Student = require("../controller/student.controller");
@@ -34,6 +36,12 @@ router.post(
 
 // students
 router.post("/students", verifyTokenAndAuthorization, Student.createStudent);
+router.post(
+  "/students",
+  verifyTokenAndAuthorization,
+  upload.single("csvFile"),
+  Student.importStudents
+);
 router.get("/students", verifyTokenAndAuthorization, Student.getStudents);
 router.get(
   "/students/:studentId",

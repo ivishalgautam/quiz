@@ -4,8 +4,10 @@ import React from "react";
 import { ImStatsDots } from "react-icons/im";
 import { CgNotes, CgProfile } from "react-icons/cg";
 import { FiLogOut } from "react-icons/fi";
-import { clearAllCookies } from "@/app/lib/cookies";
+import { IoAnalyticsOutline } from "react-icons/io5";
+import { clearAllCookies, getCookie } from "@/app/lib/cookies";
 import { usePathname, useRouter } from "next/navigation";
+import useSessionStorage from "@/app/hooks/useSessionStorage";
 
 const navList = [
   {
@@ -23,16 +25,17 @@ const navList = [
     path: "/student/results",
     icon: <ImStatsDots size={20} />,
   },
-  {
-    name: "Analytics",
-    path: "/student/analytics",
-    icon: <ImStatsDots size={20} />,
-  },
 ];
 
 const StudentSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
+
+  function isDashboard() {
+    const p = useSessionStorage("package");
+    return p === "dashboard" ? true : false;
+  }
+
   function handleLogout() {
     clearAllCookies();
     router.push("/auth/login/student");
@@ -62,6 +65,21 @@ const StudentSidebar = () => {
               </li>
             );
           })}
+          {isDashboard() && (
+            <li>
+              <Link
+                className={`text-[1.2rem] ${
+                  pathname.includes("/student/analytics")
+                    ? "text-blue-950 font-semibold"
+                    : "text-gray-500"
+                }  hover:text-blue-950 transition-colors flex gap-2 items-center`}
+                href={"/student/analytics"}
+              >
+                <IoAnalyticsOutline size={20} />
+                Analytics
+              </Link>
+            </li>
+          )}
         </ul>
         <button
           className="w-full bg-primary align-middle rounded py-2 text-white mt-6"

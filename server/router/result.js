@@ -2,10 +2,11 @@ const {
   getStudentResults,
   createResult,
 } = require("../controller/result.controller");
+const { verifyToken } = require("../middleware/verifyToken");
 
 const router = require("express").Router();
 
-router.post("/", createResult);
-router.get("/:studentId", getStudentResults);
+router.post("/", verifyToken, createResult);
+router.get("/:studentId", verifyToken, getStudentResults);
 
 module.exports = router;

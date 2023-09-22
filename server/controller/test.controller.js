@@ -12,6 +12,9 @@ async function createTest(req, res) {
       duration,
       instructions,
     } = req.body;
+    const sDate = new Date(start_time).setHours(9, 0, 0, 0);
+    const eDate = new Date(end_time).setHours(21, 0, 0, 0);
+    console.log({ sDate, eDate });
     await pool.query(
       `INSERT INTO tests (name, grade, test_type, subject, start_time, end_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
       [
@@ -19,8 +22,8 @@ async function createTest(req, res) {
         parseInt(grade),
         test_type,
         subject,
-        start_time,
-        end_time,
+        new Date(sDate),
+        new Date(eDate),
         duration,
         instructions,
       ]
@@ -112,6 +115,10 @@ async function getStudentTestsByCategory(req, res) {
       return res.json([]);
     }
 
+    const package = student.rows[0].package;
+    const subject = student.rows[0].subject;
+    const grade = student.rows[0].grade;
+
     if (!student.rows[0].payment_received) {
       const eligibilityTests = await pool.query(
         `SELECT t.*, q.total_questions
@@ -122,14 +129,11 @@ async function getStudentTestsByCategory(req, res) {
             GROUP BY test_id
         ) AS q
         ON t.id = q.test_id
-        WHERE t.is_published = true AND t.test_type = 'eligibility';`
+        WHERE t.is_published = true AND t.test_type = 'eligibility' AND subject = $1 LIMIT 1;`,
+        [subject]
       );
       return res.json(eligibilityTests.rows);
     }
-
-    const package = student.rows[0].package;
-    const grade = student.rows[0].grade;
-    const test_assigned = student.rows[0].test_assigned;
 
     const allTests = await pool.query(
       `SELECT t.*, q.total_questions
@@ -141,7 +145,7 @@ async function getStudentTestsByCategory(req, res) {
         ) AS q
         ON t.id = q.test_id
         WHERE t.is_published = true AND subject = $1;`,
-      [student.rows[0].subject]
+      [subject]
     );
 
     let tests;
@@ -151,31 +155,47 @@ async function getStudentTestsByCategory(req, res) {
         .filter((item) => item.grade <= grade);
       tests = practiceTests;
     } else if (package === "olympiad") {
-      // if(){}
-      const testAlreadyTaken = await pool.query(
-        `SELECT * FROM student_results WHERE student_id = $1 AND test_id = $2;`,
-        [student.rows[0].id, student.rows[0].test_assigned]
+      const studentTests = student?.rows[0]?.test_assigned?.map((item) =>
+        parseInt(item)
       );
-      if (testAlreadyTaken.rowCount > 0) {
-        tests = [];
+      const testAlreadyTaken = await pool.query(
+        `SELECT * FROM student_results WHERE student_id = $1 AND test_id = ANY($2);`,
+        [student?.rows[0]?.id, studentTests]
+      );
+      const testTakenIds = testAlreadyTaken?.rows?.map((i) => i.test_id);
+      console.log(studentTests);
+      if (testAlreadyTaken?.rowCount > 0) {
+        tests = allTests.rows
+          .filter((item) =>
+            studentTests
+              .filter((i) => !testTakenIds.includes(i))
+              .includes(item.id)
+          )
+          .filter((item) => item.grade <= grade);
       } else {
         tests = allTests.rows
-          .filter((item) => item.id === parseInt(test_assigned))
+          .filter((item) => studentTests.includes(item.id))
           .filter((item) => item.grade <= grade);
       }
     } else if (package === "polympiad") {
       const studentTests = student.rows[0].test_assigned.map((item) =>
         parseInt(item)
       );
-      console.log(studentTests);
       const testAlreadyTaken = await pool.query(
         `SELECT * FROM student_results WHERE student_id = $1 AND test_id = ANY($2);`,
-        [student.rows[0].id, studentTests]
+        [student?.rows[0]?.id, studentTests]
       );
-
+      const testTakenIds = testAlreadyTaken?.rows?.map((i) => i.test_id);
       if (testAlreadyTaken.rowCount > 0) {
+        console.log(studentTests.filter((i) => !testTakenIds?.includes(i)));
         tests = allTests.rows
-          .filter((item) => item.test_type === "practice")
+          .filter(
+            (item) =>
+              item.test_type === "practice" ||
+              studentTests
+                .filter((i) => !testTakenIds?.includes(i))
+                .includes(item.id)
+          )
           .filter((item) => item.grade <= grade);
       } else {
         tests = allTests.rows
@@ -186,9 +206,16 @@ async function getStudentTestsByCategory(req, res) {
           .filter((item) => item.grade <= grade);
       }
     } else if (package === "eligibility") {
-      tests = allTests.rows
-        .filter((item) => item.test_type === "eligibility")
-        .filter((item) => item.grade <= grade);
+      tests = [
+        allTests.rows
+          .filter((item) => item.test_type === "eligibility")
+          .filter((item) => item.grade <= grade)[0],
+      ];
+      console.log(
+        allTests.rows
+          .filter((item) => item.test_type === "eligibility")
+          .filter((item) => item.grade <= grade)[0]
+      );
     }
 
     res.json(tests);

@@ -33,22 +33,13 @@ export default function StudentUpdate({ params: { studentId } }) {
   async function handleUpdate(e) {
     e.preventDefault();
     try {
-      const resp = await adminRequest.put(
-        `/students/${studentId}`,
-        {
-          ...inputVals,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        }
-      );
+      const resp = await adminRequest.put(`/students/${studentId}`, {
+        ...inputVals,
+      });
       if (resp.status === 200) {
         toast.success("Student updated successfully.");
-        // router.push("/admin/students");
+        router.push("/admin/students");
       }
-      console.log(resp.data);
     } catch (error) {
       console.log(error);
     }
@@ -71,11 +62,7 @@ export default function StudentUpdate({ params: { studentId } }) {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/students/${id}`, {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      });
+      const resp = await adminRequest.delete(`/students/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         router.push("/admin/students");
@@ -87,11 +74,7 @@ export default function StudentUpdate({ params: { studentId } }) {
     // get students
     (async function () {
       try {
-        const resp = await adminRequest.get(`/students/${studentId}`, {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        });
+        const resp = await adminRequest.get(`/students/${studentId}`);
         for (const [key, value] of Object.entries(resp.data)) {
           if (key in inputVals) {
             setInputVals((prev) => ({ ...prev, [key]: value }));
@@ -105,9 +88,7 @@ export default function StudentUpdate({ params: { studentId } }) {
     // get grades
     (async function () {
       try {
-        const resp = await adminRequest.get("/grades", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/grades");
         setGrades(resp.data);
       } catch (error) {
         console.log(error);
@@ -117,9 +98,7 @@ export default function StudentUpdate({ params: { studentId } }) {
     // get olympiad test
     (async function () {
       try {
-        const resp = await adminRequest.get("/tests", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/tests");
         setOlympiadTests(
           resp.data.filter((item) => item.test_type === "olympiad")
         );
@@ -134,23 +113,25 @@ export default function StudentUpdate({ params: { studentId } }) {
       inputVals.package === "dashboard" ||
       inputVals.package === "eligibility"
     ) {
-      setInputVals((prev) => ({ ...prev, test_assigned: "" }));
+      setInputVals((prev) => ({ ...prev, test_assigned: [] }));
     }
   }, [inputVals.package]);
 
   function handleSelectTest() {
     setSelectedTests(
       olympiadTests?.filter((item) =>
-        inputVals?.test_assigned.map((i) => parseInt(i)).includes(item.id)
+        inputVals?.test_assigned?.map((i) => parseInt(i)).includes(item.id)
       )
     );
 
     setOlympiadTestsOptions(
       olympiadTests?.filter(
         (item) =>
-          !inputVals?.test_assigned.map((i) => parseInt(i)).includes(item.id)
+          !inputVals?.test_assigned?.map((i) => parseInt(i)).includes(item.id)
       )
     );
+
+    console.log({ selectedTests });
   }
 
   function handleDeleteOption(id) {
@@ -190,7 +171,7 @@ export default function StudentUpdate({ params: { studentId } }) {
               name="subject"
               id="subject"
               onChange={handleOnChange}
-              className="my-input"
+              className="my-input peer"
               value={inputVals.subject}
             >
               <option value="abacus">Abacus</option>
@@ -207,7 +188,7 @@ export default function StudentUpdate({ params: { studentId } }) {
               name="grade"
               id="grade"
               onChange={handleOnChange}
-              className="my-input"
+              className="my-input peer"
               value={inputVals.grade}
             >
               <option disabled>Select grade</option>
@@ -234,7 +215,7 @@ export default function StudentUpdate({ params: { studentId } }) {
               name="package"
               id="package"
               onChange={handleOnChange}
-              className="my-input"
+              className="my-input peer"
               value={inputVals.package}
             >
               <option disabled defaultValue>

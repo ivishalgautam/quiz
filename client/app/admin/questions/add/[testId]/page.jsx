@@ -24,18 +24,10 @@ export default function Page({ params: { testId } }) {
   async function handleFormSubmit(e) {
     e.preventDefault();
     try {
-      const resp = await adminRequest.post(
-        "/questions",
-        {
-          data: questionStates,
-          testId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        }
-      );
+      const resp = await adminRequest.post("/questions", {
+        data: questionStates,
+        testId,
+      });
 
       if (resp.status === 200) {
         toast.success(resp.data.message);
@@ -46,8 +38,6 @@ export default function Page({ params: { testId } }) {
         });
         router.push("/admin/tests");
       }
-
-      console.log(resp.data);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +80,6 @@ export default function Page({ params: { testId } }) {
       }
     })();
   }, []);
-  console.log(questionStates);
   return (
     <form onSubmit={handleFormSubmit} className="w-full">
       <div className="flex flex-col">

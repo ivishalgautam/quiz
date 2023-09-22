@@ -6,18 +6,31 @@ import { useRouter } from "next/navigation";
 
 import { Poppins } from "next/font/google";
 import { IoIosArrowBack } from "react-icons/io";
+import { authRequest } from "../lib/requestMethods";
+import useSessionStorage from "../hooks/useSessionStorage";
 const poppins = Poppins({
   weight: ["400", "600", "700", "800", "900"],
   subsets: ["latin"],
-  // display: "swap",
 });
 
 export default function StudentLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
-    if (!getCookie("student_id")) {
+    const token = getCookie("token");
+    if (!token) {
       clearAllCookies();
       return router.push("/auth/login/student");
+    } else {
+      authRequest
+        .get("/validate", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((resp) => console.log({ data: resp.data }))
+        .catch((error) => {
+          // console.log({ error });
+          clearAllCookies();
+          return router.replace("/auth/login/student");
+        });
     }
   }, []);
 

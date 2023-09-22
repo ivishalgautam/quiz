@@ -12,9 +12,7 @@ export default function ResultTable() {
 
   async function getResults() {
     try {
-      const resp = await adminRequest.get("/results", {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.get("/results");
       setResults(resp.data);
       console.log(resp.data);
     } catch (error) {
@@ -95,13 +93,18 @@ export default function ResultTable() {
   return (
     <div className="rounded">
       <div className="mb-4 flex justify-start">
-        <div className="inputGroup">
+        <div className="relative">
           <input
             type="text"
             onChange={(e) => handleSearch(e)}
             placeholder="search"
             name="search"
+            className="my-input peer"
+            autoComplete="false"
           />
+          <label htmlFor="search" className="my-label">
+            Search
+          </label>
         </div>
       </div>
       <div className="rounded-lg overflow-hidden">

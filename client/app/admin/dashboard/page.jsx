@@ -14,9 +14,7 @@ export default function Dashboard() {
       setIsLoading(true);
       try {
         await new Promise((resolve, reject) => setTimeout(resolve, 4000));
-        const resp = await adminRequest.get("/dashboard/details", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/dashboard/details");
         console.log(resp.data);
         setDetails(resp.data);
         setIsLoading(false);

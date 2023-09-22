@@ -1,5 +1,5 @@
 "use client";
-import { publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -15,7 +15,7 @@ export default function Import() {
     if (selectedFile) {
       const formData = new FormData();
       formData.append("csvFile", selectedFile);
-      const resp = await publicRequest.post("/students/import", formData);
+      const resp = await adminRequest.post("/students/import", formData);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         console.log(resp.data);

@@ -4,8 +4,10 @@ import { publicRequest } from "@/app/lib/requestMethods";
 import { getCookie } from "@/app/lib/cookies";
 import TestCard from "@/app/components/template/TestCard";
 import TestLoading from "./loading";
+import useSessionStorage from "@/app/hooks/useSessionStorage";
 
 const Page = () => {
+  const token = useSessionStorage("student_id");
   const [tests, setTests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   async function getTests() {

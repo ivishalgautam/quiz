@@ -1,5 +1,5 @@
 "use client";
-import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -31,9 +31,7 @@ export default function UpdateTestPage({ params: { testId } }) {
     getTestById(testId);
     (async function () {
       try {
-        const resp = await adminRequest.get("/grades", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/grades");
         setGrades(resp.data);
       } catch (error) {
         console.log(error);
@@ -43,9 +41,7 @@ export default function UpdateTestPage({ params: { testId } }) {
 
   async function getTestById(id) {
     try {
-      const resp = await adminRequest.get(`/tests/${id}`, {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.get(`/tests/${id}`);
       setInstructions(resp.data.instructions);
       for (const [key, value] of Object.entries(resp.data)) {
         if (key in inputs) {
@@ -60,20 +56,11 @@ export default function UpdateTestPage({ params: { testId } }) {
   async function handleFormSubmit(e) {
     e.preventDefault();
     const { instruction, ...data } = inputs;
-    const resp = await adminRequest.put(
-      `/tests/${testId}`,
-      {
-        ...data,
-        instructions: instructions,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      }
-    );
+    const resp = await adminRequest.put(`/tests/${testId}`, {
+      ...data,
+      instructions: instructions,
+    });
 
-    console.log(resp.data);
     if (resp.status === 200) {
       toast.success("Test updated");
       router.push("/admin/tests");

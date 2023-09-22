@@ -5,14 +5,11 @@ export function setCookie(name, value, daysToExpire) {
   document.cookie = `${name}=${value}; ${expires}; path=/`;
 }
 
-// export function getCookie(name) {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return parts.pop().split(";").shift();
-// }
-
 export function getCookie(name) {
-  return sessionStorage.getItem(name);
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem(name);
+  }
+  return null;
 }
 
 export function checkCookie(name) {

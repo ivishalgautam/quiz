@@ -15,9 +15,7 @@ export default function StudentResultTable({ params: { studentId } }) {
 
   async function getResults(id) {
     try {
-      const resp = await adminRequest.get(`/results/${id}`, {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.get(`/results/${id}`);
       setResults(resp.data);
       console.log(resp.data);
     } catch (error) {
@@ -31,9 +29,7 @@ export default function StudentResultTable({ params: { studentId } }) {
 
   async function handleSearch(id) {
     try {
-      const resp = await adminRequest.get(`/results/${id}`, {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.get(`/results/${id}`);
       const filtereData = resp.data
         .filter(
           (item) =>
@@ -46,7 +42,6 @@ export default function StudentResultTable({ params: { studentId } }) {
             new Date(date.endDate).toLocaleDateString()
         );
       setResults(filtereData);
-      console.log(filtereData);
     } catch (error) {
       console.log(error);
     }
@@ -98,26 +93,39 @@ export default function StudentResultTable({ params: { studentId } }) {
 
   return (
     <div className="rounded">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="inputGroup">
+      <div className="mb-4 grid grid-cols-12 gap-4">
+        <div className="relative col-span-5">
           <input
             type="date"
             onChange={(e) =>
               setDate((prev) => ({ ...prev, [e.target.name]: e.target.value }))
             }
             name="startDate"
+            className="my-input peer"
           />
+          <label htmlFor="startDate" className="my-label">
+            Start Date
+          </label>
         </div>
-        <div className="inputGroup">
+        <div className="relative col-span-5">
           <input
             type="date"
             onChange={(e) =>
               setDate((prev) => ({ ...prev, [e.target.name]: e.target.value }))
             }
             name="endDate"
+            className="my-input peer"
           />
+          <label htmlFor="endDate" className="my-label">
+            End Date
+          </label>
         </div>
-        <button onClick={() => handleSearch(studentId)}>Search</button>
+        <button
+          onClick={() => handleSearch(studentId)}
+          className="px-3 py-1 rounded bg-primary text-white col-span-2"
+        >
+          Search
+        </button>
       </div>
 
       <DataTable columns={columns} data={results} pagination />

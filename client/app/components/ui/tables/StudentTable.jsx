@@ -13,12 +13,7 @@ export default function StudentTable() {
   const [students, setStudents] = useState([]);
 
   async function getStudents() {
-    const resp = await adminRequest.get("/students", {
-      headers: {
-        Authorization: `Bearer ${getCookie("token")}`,
-      },
-    });
-    console.log(resp.data);
+    const resp = await adminRequest.get("/students");
     setStudents(resp.data);
   }
 
@@ -30,11 +25,7 @@ export default function StudentTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/students/${id}`, {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      });
+      const resp = await adminRequest.delete(`/students/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setStudents((prev) => prev.filter((item) => item.id !== id));
@@ -44,9 +35,7 @@ export default function StudentTable() {
 
   async function generateCredentials(studentId) {
     try {
-      const resp = await adminRequest.post(`/credentials/${studentId}`, null, {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.post(`/credentials/${studentId}`, null);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         console.log(resp.data);
@@ -244,13 +233,17 @@ export default function StudentTable() {
     <>
       <div className="mb-4 flex justify-between">
         <div>
-          <div className="inputGroup">
+          <div className="relative">
             <input
               type="text"
               onChange={(e) => handleSearch(e)}
               placeholder="search"
               name="search"
+              className="my-input peer"
             />
+            <label htmlFor="search" className="my-label">
+              Search
+            </label>
           </div>
         </div>
         <div>

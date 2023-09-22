@@ -32,9 +32,7 @@ export default function CreateStudentPage() {
   useEffect(() => {
     (async function () {
       try {
-        const resp = await adminRequest.get("/grades", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/grades");
         setGrades(resp.data);
       } catch (error) {
         console.log(error);
@@ -43,9 +41,7 @@ export default function CreateStudentPage() {
 
     (async function () {
       try {
-        const resp = await adminRequest.get("/tests", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/tests");
         setOlympiadTests(
           resp.data.filter((item) => item.test_type === "olympiad")
         );
@@ -58,22 +54,13 @@ export default function CreateStudentPage() {
   async function handleFormSubmit(e) {
     e.preventDefault();
     try {
-      const resp = await adminRequest.post(
-        "/students",
-        {
-          ...inputVals,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        }
-      );
+      const resp = await adminRequest.post("/students", {
+        ...inputVals,
+      });
       if (resp.status === 200) {
         toast.success("Student created successfully.");
         router.push("/admin/students");
       }
-      console.log(resp.data);
     } catch (error) {
       console.log(error);
     }

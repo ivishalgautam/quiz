@@ -33,9 +33,9 @@ export default function LoginPage() {
         sessionStorage.setItem("fullname", data.student.fullname);
         sessionStorage.setItem("student_id", data.student.id);
         sessionStorage.setItem("package", data.student.package);
-        sessionStorage.setItem("level_id", data.student.level_id);
-        sessionStorage.setItem("token", data.token);
-        router.push("/student/my-tests");
+        sessionStorage.setItem("grade", data.student.grade);
+        sessionStorage.setItem("token", data.access_token);
+        router.push("/student/profile");
       }
 
       console.log(data);

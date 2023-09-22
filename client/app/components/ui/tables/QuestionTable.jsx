@@ -12,11 +12,7 @@ export default function QuestionTable() {
 
   useEffect(() => {
     async function getStudents() {
-      const resp = await adminRequest.get("/questions", {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      });
+      const resp = await adminRequest.get("/questions");
       console.log(resp.data);
       setStudents(resp.data);
     }
@@ -27,11 +23,7 @@ export default function QuestionTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/students/${id}`, {
-        headers: {
-          Authorization: getCookie("token"),
-        },
-      });
+      const resp = await adminRequest.delete(`/students/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setStudents((prev) => prev.filter((item) => item.id !== id));

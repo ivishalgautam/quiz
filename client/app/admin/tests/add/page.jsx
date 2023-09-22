@@ -1,8 +1,7 @@
 "use client";
-import { postData } from "@/app/hooks/postData";
-import { adminRequest, publicRequest } from "@/app/lib/requestMethods";
+import { adminRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
@@ -31,9 +30,7 @@ export default function AddTestPage() {
   useEffect(() => {
     (async function () {
       try {
-        const resp = await adminRequest.get("/grades", {
-          headers: { Authorization: `Bearer ${getCookie("token")}` },
-        });
+        const resp = await adminRequest.get("/grades");
         setGrades(resp.data);
       } catch (error) {
         console.log(error);
@@ -43,52 +40,61 @@ export default function AddTestPage() {
 
   async function handleFormSubmit(e) {
     e.preventDefault();
-    const resp = await adminRequest.post(
-      "/tests",
-      {
-        name: inputs.name,
-        grade: inputs.grade,
-        test_type: inputs.test_type,
-        subject: inputs.subject,
-        start_time: inputs.start_time,
-        end_time: inputs.end_time,
-        duration: inputs.duration,
-        instructions,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      }
-    );
+    const resp = await adminRequest.post("/tests", {
+      name: inputs.name,
+      grade: inputs.grade,
+      test_type: inputs.test_type,
+      subject: inputs.subject,
+      start_time: inputs.start_time,
+      end_time: inputs.end_time,
+      duration: inputs.duration,
+      instructions,
+    });
 
-    console.log(resp.data);
+    // console.log(resp.data);
     if (resp.status === 200) {
       toast.success("New test created");
       router.push("/admin/tests");
     }
   }
 
+  // function handleDateChange(e, type) {
+  //   if (type === "start") {
+  //     const date = new Date(e._d).toISOString();
+  //     setSelectedDate((prev) => ({
+  //       ...prev,
+  //       start: new Date(e._d).setSeconds(0),
+  //     }));
+  //     setInputs((prev) => ({
+  //       ...prev,
+  //       start_time: date,
+  //     }));
+  //   } else {
+  //     const date = new Date(e._d).toISOString();
+  //     setSelectedDate((prev) => ({
+  //       ...prev,
+  //       end: new Date(e._d).setSeconds(0),
+  //     }));
+  //     setInputs((prev) => ({
+  //       ...prev,
+  //       end_time: date,
+  //     }));
+  //   }
+  // }
+
   function handleDateChange(e, type) {
+    console.log(e.target.value);
+    const selectedDate = e.target.value;
+
     if (type === "start") {
-      const date = new Date(e._d).toISOString();
-      setSelectedDate((prev) => ({
-        ...prev,
-        start: new Date(e._d).setSeconds(0),
-      }));
       setInputs((prev) => ({
         ...prev,
-        start_time: date,
+        start_time: selectedDate,
       }));
     } else {
-      const date = new Date(e._d).toISOString();
-      setSelectedDate((prev) => ({
-        ...prev,
-        end: new Date(e._d).setSeconds(0),
-      }));
       setInputs((prev) => ({
         ...prev,
-        end_time: date,
+        end_time: selectedDate,
       }));
     }
   }
@@ -100,6 +106,25 @@ export default function AddTestPage() {
     setInstructions((prev) => [...prev, inputs.instruction]);
     setInputs((prev) => ({ ...prev, instruction: "" }));
   }
+
+  useEffect(() => {
+    const startTime = new Date(inputs.start_time);
+    startTime.setHours(9, 0, 0, 0);
+    setSelectedDate((prev) => ({
+      ...prev,
+      start: startTime,
+    }));
+  }, [inputs.start_time]);
+
+  useEffect(() => {
+    const endTime = new Date(inputs.end_time);
+    endTime.setHours(21, 0, 0, 0);
+    setSelectedDate((prev) => ({
+      ...prev,
+      end: endTime,
+    }));
+  }, [inputs.end_time]);
+
   console.log(inputs);
 
   return (
@@ -203,11 +228,12 @@ export default function AddTestPage() {
 
           {/* start time */}
           <div className="relative flex flex-col justify-end">
-            <Datetime
-              value={selectedDate.start}
+            <input
+              value={new Date(inputs.start_time)}
+              type="date"
               onChange={(e) => handleDateChange(e, "start")}
               className="bg-white my-input mt-2"
-              utc={true}
+              // utc={true}
             />
             <label htmlFor="start_time" className="my-label">
               Start time
@@ -216,11 +242,12 @@ export default function AddTestPage() {
 
           {/* end time */}
           <div className="relative flex flex-col justify-end">
-            <Datetime
-              value={selectedDate.end}
+            <input
+              value={new Date(inputs.end_time)}
               onChange={(e) => handleDateChange(e, "end")}
               className="bg-white my-input mt-2"
-              utc={true}
+              // utc={true}
+              type="date"
             />
             <label htmlFor="end_time" className="my-label">
               End time

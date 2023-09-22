@@ -1,4 +1,5 @@
 "use client";
+import useSessionStorage from "@/app/hooks/useSessionStorage";
 import { getCookie, setCookie } from "@/app/lib/cookies";
 import { authRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,8 @@ import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const token = getCookie("token");
+  console.log("login", token);
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -40,10 +43,10 @@ export default function LoginPage() {
   }
 
   useEffect(() => {
-    if (getCookie("token")) {
+    if (token) {
       return router.push("/admin/dashboard");
     }
-  }, []);
+  }, [token]);
 
   return (
     <section className="h-full flex flex-col items-center justify-center">

@@ -71,4 +71,13 @@ async function adminLogin(req, res) {
   }
 }
 
-module.exports = { login, adminLogin };
+async function validateStudent(req, res) {
+  try {
+    console.log(req.user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { login, adminLogin, validateStudent };

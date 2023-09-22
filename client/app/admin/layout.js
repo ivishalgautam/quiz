@@ -6,6 +6,8 @@ import { clearAllCookies, getCookie } from "../lib/cookies";
 import { IoIosArrowBack } from "react-icons/io";
 
 import { Poppins } from "next/font/google";
+import useSessionStorage from "../hooks/useSessionStorage";
+import { authRequest } from "../lib/requestMethods";
 const poppins = Poppins({
   weight: ["400", "600", "700", "800", "900"],
   subsets: ["latin"],
@@ -15,8 +17,19 @@ const poppins = Poppins({
 export default function AdminLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
-    if (!sessionStorage.getItem("token")) {
-      return router.push("/auth/login/admin");
+    const token = getCookie("token");
+    if (!token) {
+      router.push("/auth/login/admin");
+    } else {
+      authRequest
+        .get("/validate", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((resp) => console.log({ data: resp.data }))
+        .catch((error) => {
+          clearAllCookies();
+          return router.replace("/auth/login/admin");
+        });
     }
   }, []);
 

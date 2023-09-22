@@ -23,7 +23,7 @@ function verifyToken(req, res, next) {
     const token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.JWT_SEC, (err, user) => {
       if (err) {
-        res.status(401).json({ message: err });
+        return res.status(401).json({ message: err });
       } else {
         req.user = user;
         next();

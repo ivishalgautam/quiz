@@ -11,9 +11,7 @@ export default function LevelTable() {
   const [grades, setGrades] = useState([]);
   useEffect(() => {
     async function getGrades() {
-      const resp = await adminRequest.get("/grades", {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
+      const resp = await adminRequest.get("/grades");
       console.log(resp.data);
       setGrades(resp.data);
     }
@@ -24,11 +22,7 @@ export default function LevelTable() {
     const confirmation = confirm("Please confirm to delete.");
 
     if (confirmation) {
-      const resp = await adminRequest.delete(`/grades/${id}`, {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      });
+      const resp = await adminRequest.delete(`/grades/${id}`);
       if (resp.status === 200) {
         toast.success(resp.data.message);
         setGrades((prev) => prev.filter((item) => item.id !== id));
