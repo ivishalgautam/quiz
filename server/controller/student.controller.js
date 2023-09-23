@@ -31,7 +31,6 @@ async function importStudents(req, res) {
           pincode,
           grade,
           school_name,
-          test_assigned,
           subject,
           package,
         } = data;
@@ -47,7 +46,7 @@ async function importStudents(req, res) {
         }
 
         const student = await pool.query(
-          `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender, school_name, test_assigned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *;`,
+          `INSERT INTO students (fullname, email, phone, guardian_name, dob, city, pincode, subject, package, grade, gender, school_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *;`,
           [
             fullname,
             email,
@@ -61,7 +60,6 @@ async function importStudents(req, res) {
             grade,
             gender,
             school_name,
-            test_assigned,
           ]
         );
 

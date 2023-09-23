@@ -70,7 +70,7 @@ export default function LoginPage() {
           {/* password */}
           <div className="relative">
             <input
-              type="text"
+              type="password"
               className="my-input peer"
               name="password"
               placeholder="password"

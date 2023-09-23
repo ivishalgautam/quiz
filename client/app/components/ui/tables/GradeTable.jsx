@@ -9,12 +9,20 @@ import DataTable from "react-data-table-component";
 
 export default function LevelTable() {
   const [grades, setGrades] = useState([]);
-  useEffect(() => {
-    async function getGrades() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function getGrades() {
+    setIsLoading(true);
+    try {
       const resp = await adminRequest.get("/grades");
-      console.log(resp.data);
       setGrades(resp.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
     }
+  }
+
+  useEffect(() => {
     getGrades();
   }, []);
 
@@ -64,7 +72,13 @@ export default function LevelTable() {
         </Link>
       </div>
       <div className="rounded-lg overflow-hidden">
-        <DataTable columns={columns} data={grades} pagination />
+        <DataTable
+          columns={columns}
+          data={grades}
+          pagination
+          progressPending={isLoading}
+          paginationServer
+        />
       </div>
     </>
   );

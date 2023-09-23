@@ -5,13 +5,21 @@ import { adminRequest } from "@/app/lib/requestMethods";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 import DataTable from "react-data-table-component";
+import { formatDateToIST } from "@/app/lib/time";
 
 export default function TestTable() {
   const [tests, setTests] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   async function getTests() {
-    const resp = await adminRequest.get("/tests");
-    // console.log(resp.data);
-    setTests(resp.data);
+    setIsLoading(true);
+    try {
+      const resp = await adminRequest.get("/tests");
+      setTests(resp.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -62,47 +70,47 @@ export default function TestTable() {
     {
       name: "Id",
       selector: (row) => row.id,
-      width: "3rem",
+      width: "5%",
     },
     {
       name: "Name",
       selector: (row) => row.name,
-      width: "15%",
+      // width: "15%",
     },
     {
       name: "Questions",
       selector: (row) => row.total_questions ?? 0,
-      width: "5.6rem",
+      // width: "8%",
     },
     {
       name: "Grade",
       selector: (row) => row.grade,
-      width: "4rem",
+      // width: "8%",
     },
     {
       name: "Test type",
       selector: (row) => row.test_type,
-      width: "7rem",
+      // width: "10%",
     },
     {
       name: "Subject",
       selector: (row) => row.subject,
-      width: "5rem",
+      // width: "8%",
     },
     {
       name: "Start time",
-      selector: (row) => new Date(row.start_time).toLocaleString(),
-      width: "11rem",
+      selector: (row) => formatDateToIST(row.start_time),
+      width: "12%",
     },
     {
       name: "End time",
-      selector: (row) => new Date(row.end_time).toLocaleString(),
-      width: "11rem",
+      selector: (row) => formatDateToIST(row.end_time),
+      width: "12%",
     },
     {
       name: "Created At",
-      selector: (row) => new Date(row.created_at).toDateString(),
-      width: "8rem",
+      selector: (row) => formatDateToIST(row.created_at),
+      width: "12%",
     },
     {
       name: "Published",
@@ -115,14 +123,14 @@ export default function TestTable() {
             onChange={(e) => {
               updateTest({
                 id: row.id,
-                data: { is_published: e.target.checked },
+                data: { ...row, is_published: e.target.checked },
               });
             }}
           />
           <span className="slider"></span>
         </label>
       ),
-      width: "6rem",
+      // width: "6rem",
     },
     {
       name: "Actions",
@@ -185,7 +193,7 @@ export default function TestTable() {
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between w-full">
         <div>
           <div className="relative">
             <input
@@ -209,12 +217,15 @@ export default function TestTable() {
           </Link>
         </div>
       </div>
-      <div className="rounded-lg overflow-hidden">
+      <div className="rounded-lg overflow-hidden w-full bg-white">
         <DataTable
           columns={columns}
           data={tests}
           pagination
           customStyles={customStyles}
+          progressPending={isLoading}
+          paginationServer
+          fixedHeader
         />
       </div>
     </>

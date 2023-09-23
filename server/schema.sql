@@ -49,6 +49,7 @@ CREATE TABLE tests(
     test_type test_type NOT NULL,
     subject subject_type NOT NULL,
     is_published BOOLEAN DEFAULT false,
+    amount INT NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     duration VARCHAR(40) NOT NULL,

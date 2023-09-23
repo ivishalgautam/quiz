@@ -12,11 +12,20 @@ async function createTest(req, res) {
       duration,
       instructions,
     } = req.body;
+
     const sDate = new Date(start_time).setHours(9, 0, 0, 0);
     const eDate = new Date(end_time).setHours(21, 0, 0, 0);
-    console.log({ sDate, eDate });
+    const amount =
+      test_type === "dashboard"
+        ? 300
+        : test_type === "olympiad"
+        ? 500
+        : test_type === "polympiad"
+        ? 700
+        : 0;
+
     await pool.query(
-      `INSERT INTO tests (name, grade, test_type, subject, start_time, end_time, duration, instructions) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
+      `INSERT INTO tests (name, grade, test_type, subject, start_time, end_time, duration, instructions, amount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
       [
         name,
         parseInt(grade),
@@ -26,6 +35,7 @@ async function createTest(req, res) {
         new Date(eDate),
         duration,
         instructions,
+        amount,
       ]
     );
     res.json({ message: "Test created successfully" });
@@ -36,26 +46,45 @@ async function createTest(req, res) {
 
 async function updateTestById(req, res) {
   const testId = parseInt(req.params.testId);
-  const { ...data } = req.body;
+  console.log(testId, typeof testId);
+  const {
+    name,
+    grade,
+    test_type,
+    subject,
+    start_time,
+    end_time,
+    duration,
+    instructions,
+    is_published,
+  } = req.body;
+  const sDate = new Date(start_time).setHours(9, 0, 0, 0);
+  const eDate = new Date(end_time).setHours(21, 0, 0, 0);
 
-  const updateColumns = Object.keys(data)
-    .map((column, key) => `${column} = $${key + 1}`)
-    .join(", ");
-  const updateValues = Object.values(data);
-
+  console.log(req.body);
   try {
-    const { rows, rowCount } = await pool.query(
-      `UPDATE tests SET ${updateColumns} WHERE id = $${
-        updateValues.length + 1
-      } returning *`,
-      [...updateValues, testId]
+    const { rowCount } = await pool.query(
+      `UPDATE tests SET name = $1, grade = $2, test_type = $3, subject = $4, start_time = $5, end_time = $6, duration = $7, instructions = $8, is_published = $9 WHERE id = $10`,
+      [
+        name,
+        parseInt(grade),
+        test_type,
+        subject,
+        new Date(sDate),
+        new Date(eDate),
+        duration,
+        instructions,
+        is_published,
+        testId,
+      ]
     );
 
     if (rowCount === 0)
       return res.status(404).json({ message: "Test not found!" });
 
-    res.json(rows[0]);
+    res.json({ message: "Updated successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -254,6 +283,39 @@ async function deleteTestById(req, res) {
   }
 }
 
+async function getUpcomingTests(req, res) {
+  const studentId = parseInt(req.params.studentId);
+  const { test_assigned } = req.body;
+  try {
+    const student = await pool.query(
+      `SELECT test_assigned, grade, subject FROM students WHERE id = $1`,
+      [studentId]
+    );
+
+    const studentSubject = student.rows[0].subject;
+    const studentGrade = student.rows[0].grade;
+    const assignedToStudent = student.rows[0].test_assigned.map((i) =>
+      parseInt(i)
+    );
+
+    console.log(student.rows);
+
+    console.log(assignedToStudent);
+    const { rows, rowCount } = await pool.query(
+      `SELECT * FROM tests WHERE test_type = 'olympiad' AND subject = $1 AND grade = $2;`,
+      [studentSubject, studentGrade]
+    );
+    const testsToSend = rows.filter(
+      (test) => !assignedToStudent.includes(test.id)
+    );
+
+    res.json(testsToSend);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
 // admin
 async function getAdminTests(req, res) {
   try {
@@ -280,4 +342,5 @@ module.exports = {
   deleteTestById,
   getStudentTestsByCategory,
   getTestInstructionsById,
+  getUpcomingTests,
 };

@@ -68,28 +68,39 @@ export default function UpdateTestPage({ params: { testId } }) {
   }
 
   function handleDateChange(e, type) {
+    console.log(e.target.value);
+    const selectedDate = e.target.value;
+
     if (type === "start") {
-      const date = new Date(e._d).toISOString();
-      setSelectedDate((prev) => ({
-        ...prev,
-        start: new Date(e._d).setSeconds(0),
-      }));
       setInputs((prev) => ({
         ...prev,
-        start_time: date,
+        start_time: selectedDate,
       }));
     } else {
-      const date = new Date(e._d).toISOString();
-      setSelectedDate((prev) => ({
-        ...prev,
-        end: new Date(e._d).setSeconds(0),
-      }));
       setInputs((prev) => ({
         ...prev,
-        end_time: date,
+        end_time: selectedDate,
       }));
     }
   }
+
+  useEffect(() => {
+    const startTime = new Date(inputs.start_time);
+    startTime.setHours(9, 0, 0, 0);
+    setSelectedDate((prev) => ({
+      ...prev,
+      start: startTime,
+    }));
+  }, [inputs.start_time]);
+
+  useEffect(() => {
+    const endTime = new Date(inputs.end_time);
+    endTime.setHours(21, 0, 0, 0);
+    setSelectedDate((prev) => ({
+      ...prev,
+      end: endTime,
+    }));
+  }, [inputs.end_time]);
 
   function addInstruction() {
     if (inputs.instruction === "") {
@@ -193,7 +204,6 @@ export default function UpdateTestPage({ params: { testId } }) {
             >
               <option hidden></option>
               <option value="practice">Practice</option>
-              <option value="competitive">Competitive</option>
               <option value="olympiad">Olympiad</option>
               <option value="eligibility">Eligibility</option>
             </select>
@@ -204,11 +214,12 @@ export default function UpdateTestPage({ params: { testId } }) {
 
           {/* start time */}
           <div className="relative flex flex-col justify-end">
-            <Datetime
+            <input
+              type="date"
               value={inputs.start_time}
               onChange={(e) => handleDateChange(e, "start")}
               className="bg-white my-input mt-2"
-              utc={true}
+              min={new Date()}
             />
             <label htmlFor="start_time" className="my-label">
               Start time
@@ -217,11 +228,11 @@ export default function UpdateTestPage({ params: { testId } }) {
 
           {/* end time */}
           <div className="relative flex flex-col justify-end">
-            <Datetime
+            <input
+              type="date"
               value={inputs.end_time}
               onChange={(e) => handleDateChange(e, "end")}
               className="bg-white my-input mt-2"
-              utc={true}
             />
             <label htmlFor="end_time" className="my-label">
               End time

@@ -37,7 +37,7 @@ router.post(
 // students
 router.post("/students", verifyTokenAndAuthorization, Student.createStudent);
 router.post(
-  "/students",
+  "/students/import",
   verifyTokenAndAuthorization,
   upload.single("csvFile"),
   Student.importStudents

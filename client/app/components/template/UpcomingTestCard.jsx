@@ -3,8 +3,9 @@ import { formatDateToIST } from "@/app/lib/time";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-export default function TestCard({ test }) {
+export default function UpcomingTestCard({ test }) {
   const router = useRouter();
+
   function handleNavigate(id) {
     router.replace(`/student/my-tests/instructions/${id}`);
   }
@@ -36,30 +37,18 @@ export default function TestCard({ test }) {
             <th className="py-2 bg-gray-300 w-[30%] text-sm">Test date time</th>
             <td className="p-2 w-[70%]">{formatDateToIST(test.start_time)}</td>
           </tr>
-          <tr className="w-full flex border-b">
+          {/* <tr className="w-full flex border-b">
             <th className="py-2 bg-gray-300 w-[30%] text-sm">
               Total questions
             </th>
-            <td className="p-2 w-[70%]">{test.total_questions}</td>
-          </tr>
+            <td className="p-2 w-[70%]">{test.total_questions ?? 0}</td>
+          </tr> */}
         </tbody>
       </table>
       <div>
-        {isTestStarted ? (
-          <button
-            onClick={() => handleNavigate(test.id)}
-            className="bg-primary hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold"
-          >
-            Start test
-          </button>
-        ) : (
-          <button
-            className="bg-primary text-sm hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold cursor-not-allowed"
-            disabled
-          >
-            {`Test will start on: ${formatDateToIST(test.start_time)}`}
-          </button>
-        )}
+        <button className="bg-primary text-sm hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold cursor-not-allowed">
+          Intrested
+        </button>
       </div>
     </div>
   );

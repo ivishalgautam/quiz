@@ -8,13 +8,21 @@ import { BsPencilSquare } from "react-icons/bs";
 import { toast } from "react-hot-toast";
 import { getCookie } from "@/app/lib/cookies";
 import DataTable from "react-data-table-component";
+import { formatDateToIST } from "@/app/lib/time";
 
 export default function StudentTable() {
   const [students, setStudents] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function getStudents() {
-    const resp = await adminRequest.get("/students");
-    setStudents(resp.data);
+    setIsLoading(true);
+    try {
+      const resp = await adminRequest.get("/students");
+      setStudents(resp.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -145,7 +153,8 @@ export default function StudentTable() {
     },
     {
       name: "Created At",
-      selector: (row) => `${new Date(row.created_at).toDateString()}`,
+      selector: (row) => formatDateToIST(row.created_at),
+      width: "15%",
     },
     {
       name: "Disabled",
@@ -255,8 +264,14 @@ export default function StudentTable() {
           </Link>
         </div>
       </div>
-      <div className="rounded-lg overflow-hidden">
-        <DataTable columns={columns} data={students} pagination />
+      <div className="rounded-lg overflow-hidden bg-white">
+        <DataTable
+          columns={columns}
+          data={students}
+          pagination
+          progressPending={isLoading}
+          paginationServer
+        />
       </div>
     </>
   );

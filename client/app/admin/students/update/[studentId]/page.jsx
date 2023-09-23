@@ -80,6 +80,7 @@ export default function StudentUpdate({ params: { studentId } }) {
             setInputVals((prev) => ({ ...prev, [key]: value }));
           }
         }
+        console.log(resp.data);
       } catch (error) {
         console.log(error);
       }

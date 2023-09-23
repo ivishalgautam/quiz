@@ -5,7 +5,8 @@ import { ImStatsDots } from "react-icons/im";
 import { CgNotes, CgProfile } from "react-icons/cg";
 import { FiLogOut } from "react-icons/fi";
 import { IoAnalyticsOutline } from "react-icons/io5";
-import { clearAllCookies, getCookie } from "@/app/lib/cookies";
+import { SlCalender } from "react-icons/sl";
+import { clearAllCookies } from "@/app/lib/cookies";
 import { usePathname, useRouter } from "next/navigation";
 import useSessionStorage from "@/app/hooks/useSessionStorage";
 
@@ -24,6 +25,11 @@ const navList = [
     name: "Results",
     path: "/student/results",
     icon: <ImStatsDots size={20} />,
+  },
+  {
+    name: "Upcoming tests",
+    path: "/student/upcoming-tests",
+    icon: <SlCalender size={20} />,
   },
 ];
 

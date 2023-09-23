@@ -1,22 +1,22 @@
 "use client";
-import { getCookie } from "@/app/lib/cookies";
 import { adminRequest } from "@/app/lib/requestMethods";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { AiOutlineDelete } from "react-icons/ai";
 import { FiExternalLink } from "react-icons/fi";
 
 export default function ResultTable() {
   const [results, setResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function getResults() {
+    setIsLoading(true);
     try {
       const resp = await adminRequest.get("/results");
       setResults(resp.data);
-      console.log(resp.data);
+      setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      setIsLoading(false);
     }
   }
 
@@ -76,7 +76,7 @@ export default function ResultTable() {
     },
     {
       name: "Created On",
-      selector: (row) => new Date(row.created_at).toDateString(),
+      selector: (row) => formatDateToIST(row.created_at)(),
       width: "10rem",
     },
     {
@@ -108,7 +108,13 @@ export default function ResultTable() {
         </div>
       </div>
       <div className="rounded-lg overflow-hidden">
-        <DataTable columns={columns} data={results} pagination />
+        <DataTable
+          columns={columns}
+          data={results}
+          pagination
+          progressPending={isLoading}
+          paginationServer
+        />
       </div>
     </div>
   );
