@@ -20,6 +20,7 @@ app.use("/api/results", require("./router/result"));
 app.use("/api/dashboard", require("./router/dashboard"));
 app.use("/api/leads", require("./router/leads"));
 app.use("/api/grades", require("./router/grade"));
+app.use("/api/query", require("./router/query"));
 
 // auth
 app.use("/api/auth", require("./router/auth"));

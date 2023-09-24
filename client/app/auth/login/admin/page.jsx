@@ -2,12 +2,15 @@
 import useSessionStorage from "@/app/hooks/useSessionStorage";
 import { getCookie, setCookie } from "@/app/lib/cookies";
 import { authRequest } from "@/app/lib/requestMethods";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const query = useSearchParams();
+  const callback = query.get("callback");
+  console.log(callback);
   const token = getCookie("token");
   console.log("login", token);
   const [credentials, setCredentials] = useState({
@@ -31,6 +34,10 @@ export default function LoginPage() {
         toast.success("Logged in successfully");
         sessionStorage.setItem("email", data.email);
         sessionStorage.setItem("token", data.access_token);
+
+        if (callback) {
+          return router.replace(callback);
+        }
 
         router.push("/admin/dashboard");
       }

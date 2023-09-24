@@ -1,17 +1,23 @@
 "use client";
+import { getCookie } from "@/app/lib/cookies";
+import { publicRequest } from "@/app/lib/requestMethods";
 import { formatDateToIST } from "@/app/lib/time";
-import { useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function UpcomingTestCard({ test }) {
-  const router = useRouter();
-
-  function handleNavigate(id) {
-    router.replace(`/student/my-tests/instructions/${id}`);
+  async function sendQuery(testId) {
+    try {
+      const resp = await publicRequest.post(
+        `/query/${getCookie("student_id")}/${testId}`
+      );
+      console.log(resp.data);
+      toast.success(resp.data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
   }
-
-  const isTestStarted = new Date() > new Date(test?.start_time);
-  console.log(isTestStarted);
 
   return (
     <div className="bg-white p-6 max-w-[30rem] rounded-md gap-y-4">
@@ -46,8 +52,11 @@ export default function UpcomingTestCard({ test }) {
         </tbody>
       </table>
       <div>
-        <button className="bg-primary text-sm hover:brightness-90 w-full rounded p-2 inline-block text-center text-white  font-bold cursor-not-allowed">
-          Intrested
+        <button
+          onClick={() => sendQuery(test.id)}
+          className="bg-primary text-sm hover:brightness-90 w-full rounded p-2 inline-block text-center text-white font-bold"
+        >
+          Intrested ?
         </button>
       </div>
     </div>
