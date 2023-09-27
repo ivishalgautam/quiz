@@ -26,11 +26,11 @@ async function disableTest() {
   }
 }
 
-cron.schedule("0 * * * * *", publishTest);
-cron.schedule("0 * * * * *", disableTest);
+cron.schedule("0 * * * *", publishTest);
+cron.schedule("0 * * * *", disableTest);
 
 // user
-router.get("/", verifyToken, Controller.getTests);
+router.get("/", Controller.getTests);
 router.get(
   "/instructions/:testId",
   verifyToken,
