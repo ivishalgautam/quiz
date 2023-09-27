@@ -181,7 +181,7 @@ async function getStudentTestsByCategory(req, res) {
     if (package === "dashboard") {
       let practiceTests = allTests.rows
         .filter((item) => item.test_type === "practice")
-        .filter((item) => item.grade <= grade);
+        .filter((item) => item.grade === grade);
       tests = practiceTests;
     } else if (package === "olympiad") {
       const studentTests = student?.rows[0]?.test_assigned?.map((item) =>
@@ -200,11 +200,11 @@ async function getStudentTestsByCategory(req, res) {
               .filter((i) => !testTakenIds.includes(i))
               .includes(item.id)
           )
-          .filter((item) => item.grade <= grade);
+          .filter((item) => item.grade === grade);
       } else {
         tests = allTests.rows
           .filter((item) => studentTests.includes(item.id))
-          .filter((item) => item.grade <= grade);
+          .filter((item) => item.grade === grade);
       }
     } else if (package === "polympiad") {
       const studentTests = student.rows[0].test_assigned.map((item) =>
@@ -262,6 +262,19 @@ async function getTests(req, res) {
 
     res.json(rows);
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getFilteredTests(req, res) {
+  const { grade, subject } = req.query;
+  try {
+    const tests = await pool.query(
+      `SELECT * FROM tests WHERE grade = $1 AND subject = $2 AND test_type = 'olympiad';`
+    );
+    res.json(tests.rows);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -343,4 +356,5 @@ module.exports = {
   getStudentTestsByCategory,
   getTestInstructionsById,
   getUpcomingTests,
+  getFilteredTests,
 };
