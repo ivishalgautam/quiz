@@ -132,7 +132,7 @@ export default function StudentUpdate({ params: { studentId } }) {
       )
     );
 
-    console.log({ selectedTests });
+    // console.log({ selectedTests });
   }
 
   function handleDeleteOption(id) {
@@ -151,6 +151,8 @@ export default function StudentUpdate({ params: { studentId } }) {
   useEffect(() => {
     setOlympiadTestsOptions(olympiadTests);
   }, [olympiadTests]);
+
+  // console.log({ inputVals });
 
   return (
     <section>

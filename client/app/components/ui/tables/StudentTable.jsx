@@ -19,6 +19,7 @@ export default function StudentTable() {
     try {
       const resp = await adminRequest.get("/students");
       setStudents(resp.data);
+      // console.log(resp.data);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
