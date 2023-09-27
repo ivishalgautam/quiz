@@ -78,7 +78,7 @@ export default function CreateStudentPage() {
     setInputVals((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSelectTest() {
+  const handleSelectTest = useCallback(() => {
     setSelectedTests(
       olympiadTests?.filter((item) => inputVals.test_assigned.includes(item.id))
     );
@@ -88,7 +88,7 @@ export default function CreateStudentPage() {
         (item) => !inputVals.test_assigned.includes(item.id)
       )
     );
-  }
+  }, [inputVals.test_assigned, olympiadTests]);
 
   function handleDeleteOption(id) {
     setInputVals((prev) => ({
@@ -98,9 +98,8 @@ export default function CreateStudentPage() {
   }
 
   useEffect(() => {
-    console.log("changed");
     handleSelectTest();
-  }, [inputVals.test_assigned]);
+  }, [inputVals.test_assigned, handleSelectTest]);
 
   useEffect(() => {
     setOlympiadTestsOptions(olympiadTests);

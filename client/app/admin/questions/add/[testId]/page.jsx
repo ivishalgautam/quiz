@@ -79,7 +79,7 @@ export default function Page({ params: { testId } }) {
         console.log(error);
       }
     })();
-  }, []);
+  }, [testId]);
   return (
     <form onSubmit={handleFormSubmit} className="w-full">
       <div className="flex flex-col">

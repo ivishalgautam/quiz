@@ -10,9 +10,9 @@ export default function LoginPage() {
   const router = useRouter();
   const query = useSearchParams();
   const callback = query.get("callback");
-  console.log(callback);
+  // console.log(callback);
   const token = getCookie("token");
-  console.log("login", token);
+  // console.log("login", token);
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",

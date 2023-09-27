@@ -31,7 +31,7 @@ export default function AdminLayout({ children }) {
           return router.replace("/auth/login/admin");
         });
     }
-  }, []);
+  }, [router]);
 
   const handleGoBack = () => {
     router.back();

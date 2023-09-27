@@ -39,7 +39,7 @@ const Page = () => {
           })
         ) : tests.length <= 0 ? (
           <div className="col-span-2 flex items-center justify-center text-3xl font-bold text-primary">
-            You don't have any test
+            You dont have any test
           </div>
         ) : (
           tests?.map((test) => {

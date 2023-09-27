@@ -146,7 +146,7 @@ export default function StudentUpdate({ params: { studentId } }) {
 
   useEffect(() => {
     handleSelectTest();
-  }, [inputVals.test_assigned]);
+  }, [inputVals.test_assigned, handleSelectTest]);
 
   useEffect(() => {
     setOlympiadTestsOptions(olympiadTests);

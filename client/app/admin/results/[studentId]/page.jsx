@@ -25,7 +25,7 @@ export default function StudentResultTable({ params: { studentId } }) {
 
   useEffect(() => {
     getResults(studentId);
-  }, []);
+  }, [studentId]);
 
   async function handleSearch(id) {
     try {

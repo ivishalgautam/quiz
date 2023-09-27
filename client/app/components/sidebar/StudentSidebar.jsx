@@ -37,7 +37,7 @@ const StudentSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  function isDashboard() {
+  function IsDashboard() {
     const p = useSessionStorage("package");
     return p === "dashboard" ? true : false;
   }
@@ -71,7 +71,7 @@ const StudentSidebar = () => {
               </li>
             );
           })}
-          {isDashboard() && (
+          {IsDashboard() && (
             <li>
               <Link
                 className={`text-[1.2rem] ${

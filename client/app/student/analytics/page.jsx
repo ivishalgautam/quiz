@@ -5,7 +5,7 @@ import { publicRequest } from "@/app/lib/requestMethods";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-export default function page() {
+export default function AnalyticsPage() {
   const [points, setPoints] = useState([]);
   const [date, setDate] = useState({
     startDate: null,

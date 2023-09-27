@@ -37,7 +37,7 @@ export default function UpdateTestPage({ params: { testId } }) {
         console.log(error);
       }
     })();
-  }, []);
+  }, [testId]);
 
   async function getTestById(id) {
     try {
